@@ -7,13 +7,13 @@
             // then cont with large and small p 
             // bla
             [
-              'x', 'func|createStars'
+              -1, 'func|createStars'
             ],
             [
-              'x', 'func|slideStars'
+              -1, 'func|slideStars'
             ],
             [
-              'x', 'func|fadeStars'
+              -1, 'func|fadeStars'
             ],
             [
                 0, 'smallPumpkin|circle|r:20|s:150'
