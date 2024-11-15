@@ -7,7 +7,7 @@
             // then cont with large and small p 
             // bla
             [
-              'x', 'func|createStart'
+              'x', 'func|createStars'
             ],
             [
               'x', 'func|slideStars'
