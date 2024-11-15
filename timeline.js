@@ -5,6 +5,16 @@
             // then continue sp for a bit.
             // attack with a group of large pumpkins
             // then cont with large and small p 
+
+            [
+              x, 'func|createStart'
+            ],
+            [
+              x, 'func|slideStars'
+            ],
+            [
+              x, 'func|fadeStars'
+            ],
             [
                 0, 'smallPumpkin|circle|r:20|s:150'
             ],
