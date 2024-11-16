@@ -40,9 +40,9 @@ this.weapons = {
                 fire_rate: 1000, // 1/5 of a second in ms
                 power: 1,
                 range: 1500,
-                speed: 1,
+                speed: 6,
                 size: 5,
-                spread: 30,
+                spread: 0,
                 scale: 0.2,
                 nextShotAt: 0,
                 spin: .03
@@ -99,6 +99,7 @@ this.weapons = {
                 nextHitAt: 0,
                 spin: 1.5
             },
+            /*
             cake: {
                 fire_rate: 2000, // 1/8 of a second in ms
                 power: 1,
@@ -111,6 +112,7 @@ this.weapons = {
                 hitDelay: 5,
                 nextHitAt: 0,
             },
+            */
             bonbon: {
                 fire_rate: 800, // 1/8 of a second in ms
                 power: 2,
