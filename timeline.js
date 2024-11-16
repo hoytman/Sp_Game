@@ -28,7 +28,8 @@
                 15, 'smallPumpkin|circle|r:0.015'
             ],
             [
-                0, 'largePumpkin|circle|r:10|s:20'
+                0, 'largePumpkin|circle|r:10|s:20',
+                'func|playBoneMusic'
             ],
             [
                 30,
@@ -50,7 +51,7 @@
             // Attack with a group of birdMummy
             // Then add birdMummy to the mis
             [
-                0, 'birdMummy|angle|r:6|s:100'
+                0, 'birdMummy|angle|r:6|s:100',
 
             ],
             [
