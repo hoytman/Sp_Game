@@ -280,8 +280,6 @@ class Example extends Phaser.Scene {
         this.createRandomBackgroundObjects();
         // Create the player at the center of the screen
 
-
-
         // Create walking animation
         this.anims.create({
             key: 'walk',
@@ -325,7 +323,6 @@ class Example extends Phaser.Scene {
         this.introOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000);
         this.introOverlay.setDepth(1000);
     }
-
 
     toggleShop() {
         if (this.paused) {
@@ -714,7 +711,6 @@ class Example extends Phaser.Scene {
         // Update health bar
         this.healthBar.width = (this.playerHealth / 1000) * 500;
 
-
         switch (this.funcOverride) {
             case '':
                 break;
@@ -727,6 +723,30 @@ class Example extends Phaser.Scene {
             case 'fadeStars':
                 this.fadeStars();
                 break;
+            case 'playBoneMusic':
+                this.playBoneMusic();
+                this.paused = false;
+            break;
+            case 'playMadnessMusic':
+                this.playMadnessMusic();
+                this.paused = false;
+            break;
+            case 'playWinMusic':
+                this.playWinMusic();
+                this.paused = false;
+            break;
+            case 'playRunMusic':
+                this.playRunMusic();
+                this.paused = false;
+            break;
+            case 'playEasyLevelMusic':
+                this.playEasyLevelMusic();
+                this.paused = false;
+            break;
+            case 'playBossMusic':
+                this.playBossMusic();
+                this.paused = false;
+            break;
         }
 
         if (this.paused) {
@@ -1563,6 +1583,8 @@ class Example extends Phaser.Scene {
 
             } else if (typeof timelineSettings === 'string') {
 
+                console.log(timelineSettings);
+
                 let rawSettings = timelineSettings.split("|");
 
                 if (rawSettings[0] == 'func') {
@@ -1973,7 +1995,6 @@ class Example extends Phaser.Scene {
     }
 
     fadeStars() {
-        console.log('fadeStars:' + this.cinematicStep);
         // Scroll stars
 
         if(this.introOverlay.alpha > 0){
@@ -1997,6 +2018,56 @@ class Example extends Phaser.Scene {
         }
 
         this.slideStars();
+    }
+
+    playBoneMusic(){
+        this.boneMusic = this.sound.add('boneMusic');
+        this.currentMusic.stop();
+        this.boneMusic.play();
+        this.currentMusic = this.boneMusic;
+    }
+
+    playMadnessMusic(){
+        this.madnessMusic = this.sound.add('madnessMusic');
+        this.currentMusic.stop();
+        this.madnessMusic.play();
+        this.currentMusic = this.madnessMusic;
+    }
+
+    playWinMusic(){
+        this.winMusic = this.sound.add('winMusic');
+        this.currentMusic.stop();
+        this.winMusic.play();
+        this.currentMusic = this.winMusic;
+    }
+
+    playRunMusic(){
+        this.runMusic = this.sound.add('runMusic');
+        this.currentMusic.stop();
+        this.runMusic.play();
+        this.currentMusic = this.runMusic;
+    }
+
+    playEasyLevelMusic(){
+        this.easyLevelMusic = this.sound.add('easyLevelMusic');
+        this.currentMusic.stop();
+        this.easyLevelMusic.play();
+        this.currentMusic = this.easyLevelMusic;
+    }
+
+    playBossMusic(){
+        this.bossIntro = this.sound.add('bossIntroMusic');
+        this.bossMusic = this.sound.add('bossMusic');
+
+        this.bossIntro.play();
+        this.currentMusic.stop();
+        this.currentMusic = this.bossIntro;
+        // Play intro music, then prolog
+        
+        this.bossIntro.once('complete', () => {
+            this.currentMusic = this.bossMusic;
+            this.bossMusic.play();
+        });
     }
 
 
