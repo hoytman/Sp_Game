@@ -28,7 +28,8 @@ class Example extends Phaser.Scene {
         this.cursors;
         this.playerX = 0;
         this.playerY = 0;
-        this.playerHealth = 1000;
+        this.playerHealth = 400;
+        this.playerMaxHealth = 400;
         this.healthBar;
         this.lastDamageTime = 0;
         this.lastEnemySoundTime = 0; // New variable to track the last time enemy sound was played
@@ -39,7 +40,7 @@ class Example extends Phaser.Scene {
         this.lastEnemyDirectionChangeTime = 0;
         this.gameTimer = 0; // New game timer
         this.shopPage = 1;
-        this.shopMaxPage = 20;
+        this.shopMaxPage = 12;
         this.dots = [];
         this.completedSegment = -1;
         this.weaponSlots = 1;
@@ -188,6 +189,12 @@ class Example extends Phaser.Scene {
     create() {
         // Add key listener for 'q'
         this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        // Add event listener for window blur
+        window.addEventListener('blur', () => {
+            if (this.playingGame && !this.paused) {
+                this.openShop();
+            }
+        });
 
         // Load the timeline and powerups from the external scripts
         if (window.timeline) {
@@ -338,7 +345,6 @@ class Example extends Phaser.Scene {
             this.openShop();
         }
     }
-
     openShop() {
         if (this.paused) return; // Prevent opening if already open
         this.paused = true;
@@ -353,12 +359,10 @@ class Example extends Phaser.Scene {
         this.shopTitle.setScrollFactor(0);
         this.shopTitle.setDepth(51);
         // Pause game music and play menu music
-
         if (this.menuMusic === null) {
             this.menuMusic = this.sound.add('menuMusic');
             this.menuMusic.setLoop(true);
         }
-
         this.currentMusic.pause();
         this.menuMusic.play();
         this.fillShop();
@@ -400,7 +404,7 @@ class Example extends Phaser.Scene {
         }
 
         // Instead of tracking actvation, this will disable the health powerup when health is maxed out.
-        if (this.playerHealth == 1000) {
+        if (this.playerHealth >= this.playerMaxHealth) {
             this.powerups['more_health'].active = true;
         } else {
             this.powerups['more_health'].active = false;
@@ -606,7 +610,7 @@ class Example extends Phaser.Scene {
             switch (key) {
                 case 'more_health':
                     this.playerHealth += 100;
-                    if (this.playerHealth > 1000) {
+                    if (this.playerHealth > this.playerMaxHealth) {
                         this.playerHealth = 1000;
                     }
                     break;
@@ -630,7 +634,7 @@ class Example extends Phaser.Scene {
                 case 'icecream_active':
                 case 'lollipop_active':
                 case 'peppermint_active':
-                case 'cake_active':
+                    //case 'cake_active':
                 case 'bonbon_active':
                 case 'cupCake_active':
                 case 'candybag_active':
@@ -726,7 +730,7 @@ class Example extends Phaser.Scene {
         // Handle weapon firing
 
         // Update health bar
-        this.healthBar.width = (this.playerHealth / 1000) * 500;
+        this.healthBar.width = (this.playerHealth / this.playerMaxHealth) * 500;
 
         switch (this.funcOverride) {
             case '':
@@ -837,7 +841,7 @@ class Example extends Phaser.Scene {
                     this.sound.play('damageSound');
                     if (this.playerHealth <= 0) {
                         this.playerHealth = 0;
-                        this.restartGame();
+                        this.gameOverScreen();
                     }
                     // Set a timer to make the player vulnerable again after 500 ms
                     this.time.delayedCall(500, () => {
@@ -1034,14 +1038,13 @@ class Example extends Phaser.Scene {
             let ccData = this.weapons.candyCorn;
             if (currentTime > ccData.nextShotAt) {
                 ccData.nextShotAt = currentTime + ccData.fire_rate;
-                this.fireCandyCorn(this.worldX, this.chestY, 0, ccData, currentTime);
-                this.fireCandyCorn(this.worldX, this.chestY, 90, ccData, currentTime);
-                this.fireCandyCorn(this.worldX, this.chestY, 180, ccData, currentTime);
+                this.fireCandyCorn(this.worldX, this.chestY, angle, ccData, currentTime);
+                this.fireCandyCorn(this.worldX, this.chestY, angle + .3, ccData, currentTime);
+                this.fireCandyCorn(this.worldX, this.chestY, angle - .3, ccData, currentTime);
 
                 if (this.powerups.cc_double.active) {
-                    this.fireCandyCorn(this.worldX, this.chestY, 45, ccData, currentTime);
-                    this.fireCandyCorn(this.worldX, this.chestY, 135, ccData, currentTime);
-                    this.fireCandyCorn(this.worldX, this.chestY, 225, ccData, currentTime);
+                    this.fireCandyCorn(this.worldX, this.chestY, angle + .6, ccData, currentTime);
+                    this.fireCandyCorn(this.worldX, this.chestY, angle - .6, ccData, currentTime);
                 }
             }
         }
@@ -1054,6 +1057,7 @@ class Example extends Phaser.Scene {
             }
         }
         // Fire Cake
+        /*
         if (this.powerups.cake_active.active) {
             let cakeData = this.weapons.cake;
             if (currentTime > cakeData.nextShotAt) {
@@ -1061,6 +1065,7 @@ class Example extends Phaser.Scene {
                 this.fireCake(this.worldX, this.chestY, angle, cakeData, currentTime);
             }
         }
+        */
         // Fire BonBon
         if (this.powerups.bonbon_active.active) {
             let bonbonData = this.weapons.bonbon;
@@ -1179,12 +1184,14 @@ class Example extends Phaser.Scene {
         this.activeBullets.peppermints.push(myBullet);
         this.frontWorldContainer.add(myBullet);
     }
+    /*
     fireCake(myX, myY, angle, cakeData, currentTime) {
         let myBullet = this.add.image(myX, myY, 'cake');
         myBullet = this.setStandardBulletValues(myBullet, cakeData, angle, currentTime);
         this.activeBullets.cakes.push(myBullet);
         this.frontWorldContainer.add(myBullet);
     }
+    */
     fireBonBon(myX, myY, angle, bonbonData, currentTime) {
         let myBullet = this.add.image(myX, myY, 'bonbon');
         myBullet = this.setStandardBulletValues(myBullet, bonbonData, angle, currentTime);
@@ -1266,9 +1273,11 @@ class Example extends Phaser.Scene {
                 this.processRepeatHitBullet('peppermints', i, currentTime);
             }
         }
+        /*
         for (let i = this.activeBullets.cakes.length - 1; i >= 0; i--) {
             this.processLinearBulletMovement('cakes', i, currentTime);
         }
+        */
         for (let i = this.activeBullets.bonbons.length - 1; i >= 0; i--) {
             if (this.processLinearBulletMovement('bonbons', i, currentTime)) {
                 this.processBonBonHitBullet('bonbons', i, currentTime)
@@ -1941,23 +1950,39 @@ class Example extends Phaser.Scene {
         }
     }
 
-    restartGame() {
+    gameOverScreen() {
+        // Save the high score
+        this.saveHighScore(this.score);
+
         // Remove all enemies
         this.enemies.forEach(enemy => enemy.destroy());
         this.enemies = [];
-        // Reset player health to maximum
-        this.playerHealth = 1000;
-        // Update health bar
-        this.healthBar.width = 500;
-        // Reset player position (optional)
-        this.playerX = 0;
-        this.playerY = 0;
-        this.worldContainer.x = 0;
-        this.worldContainer.y = 0;
-        this.frontWorldContainer.x = 0;
-        this.frontWorldContainer.y = 0;
-        // Reset game timer
-        this.gameTimer = 0;
+
+        this.introOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000);
+        this.introOverlay.setDepth(1000);
+
+                // Add the title
+        this.title = this.add.text(400, 50, 'Game Over', {
+            fontSize: '64px',
+            fontStyle: 'bold',
+            fill: '#ff8800',
+            stroke: '#000000',
+            strokeThickness: 6
+        });
+        this.title.setOrigin(0.5);
+        this.title.setDepth(1002);
+
+        // Add instructions text
+        this.instructions = this.add.text(400, 120,
+            'Please refreash to try again', {
+                fontSize: '24px',
+                fontStyle: 'bold',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.instructions.setOrigin(0.5);
+        this.instructions.setDepth(1002);
+
     }
 
     // Movies
@@ -1974,13 +1999,13 @@ class Example extends Phaser.Scene {
             this.stars.push(star);
         }
         // Add the moon
-        this.moon = this.add.image(100, 100, 'moon');
+        this.moon = this.add.image(100, 200, 'moon');
         this.moon.setOrigin(0.5, 0.5);
         this.moon.setScale(0.5);
         this.moon.setDepth(1001);
 
         // Add the title
-        this.title = this.add.text(400, 200, 'Halloween Battle', {
+        this.title = this.add.text(400, 50, 'Halloween Battle', {
             fontSize: '64px',
             fontStyle: 'bold',
             fill: '#ff8800',
@@ -1989,17 +2014,40 @@ class Example extends Phaser.Scene {
         });
         this.title.setOrigin(0.5);
         this.title.setDepth(1002);
+
         // Add instructions text
-        this.instructions = this.add.text(400, 280, 'Use the AWSD keys to move and aim with the mouse.\nAvoid enemies and try to kill the boss.', {
-            fontSize: '24px',
-            fontStyle: 'bold',
+        this.instructions = this.add.text(400, 120,
+            'Use the AWSD keys to move and aim with the mouse.\n' +
+            'Avoid enemies and try to kill the boss.\n' +
+            'Grab Leaves to buy powerups in the shop', {
+                fontSize: '24px',
+                fontStyle: 'bold',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.instructions.setOrigin(0.5);
+        this.instructions.setDepth(1002);
+
+        // Add high score list
+        const highScores = this.getHighScores();
+        let scoreText = 'Top 10 Scores:\n';
+        for (let i = 0; i < 10; i++) {
+            if (i < highScores.length) {
+                scoreText += `${i + 1}. ${highScores[i]}\n`;
+            } else {
+                scoreText += `${i + 1}. ????????\n`;
+            }
+        }
+        this.highScoreList = this.add.text(400, 350, scoreText, {
+            fontSize: '25px',
             fill: '#ffffff',
             align: 'center'
         });
-        this.instructions.setOrigin(0.5);
-        this.instructions.setDepth(1002);
+        this.highScoreList.setOrigin(0.5);
+        this.highScoreList.setDepth(1002);
+
         // Add the play button
-        this.playButton = this.add.text(400, 400, 'Play', {
+        this.playButton = this.add.text(400, 550, 'Play', {
             fontSize: '32px',
             fontStyle: 'bold',
             fill: '#ffffff',
@@ -2017,7 +2065,6 @@ class Example extends Phaser.Scene {
         });
         this.playButton.on('pointerdown', this.PlayGameButtonClick, this);
         this.playButton.setDepth(1002);
-
         // Set up variables for the cinematic effect
         this.cinematicStep = 0;
         this.paused = false;
@@ -2042,12 +2089,12 @@ class Example extends Phaser.Scene {
 
     fadeStars() {
         // Scroll stars
-
         if (this.introOverlay.alpha > 0) {
             this.introOverlay.alpha -= .02;
             this.moon.alpha -= .02;
             this.title.alpha -= .02;
-            this.instructions.alpha -= .02; // Fade out instructions
+            this.instructions.alpha -= .02;
+            this.highScoreList.alpha -= .02; // Fade out high score list
             this.playButton.alpha -= .02;
             this.stars.forEach(star => {
                 star.alpha -= .02;
@@ -2061,7 +2108,8 @@ class Example extends Phaser.Scene {
             this.stars = [];
             this.moon.destroy();
             this.title.destroy();
-            this.instructions.destroy(); // Destroy instructions
+            this.instructions.destroy();
+            this.highScoreList.destroy(); // Destroy high score list
             this.playButton.destroy();
             this.cinematicStep = 0;
             this.paused = false;
@@ -2126,11 +2174,17 @@ class Example extends Phaser.Scene {
             this.bossMusic.play();
         });
     }
-
-
-
+    getHighScores() {
+        const scores = JSON.parse(localStorage.getItem('highScores')) || [];
+        return scores.sort((a, b) => b - a).slice(0, 10);
+    }
+    saveHighScore(score) {
+        const highScores = this.getHighScores();
+        highScores.push(score);
+        highScores.sort((a, b) => b - a);
+        localStorage.setItem('highScores', JSON.stringify(highScores.slice(0, 10)));
+    }
 }
-
 const config = {
     type: Phaser.AUTO,
     parent: 'renderDiv',
