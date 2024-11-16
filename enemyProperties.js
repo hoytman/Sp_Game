@@ -76,7 +76,7 @@
             wolfEnemy: {
                 size: 15,
                 tall: 70,
-                health: I 50,
+                health: 50,
                 damage: 50,
                 scale: 0.25,
                 speed: 3.5
