@@ -121,7 +121,7 @@
                 updates: {
                     weaponSlots: 5
                 },
-                requires: 'weaponSlot3'
+                requires: 'weaponSlot4'
             },
             'weaponSlot6': {
                 text: "Increase weapon slots from 5 to 6",
@@ -132,7 +132,7 @@
                 updates: {
                     weaponSlots: 6
                 },
-                requires: 'weaponSlot3'
+                requires: 'weaponSlot5'
             },
             'weaponSlot6': {
                 text: "Increase weapon slots from 6 to 7",
@@ -143,7 +143,7 @@
                 updates: {
                     weaponSlots: 7
                 },
-                requires: 'weaponSlot3'
+                requires: 'weaponSlot6'
             },
 
 
