@@ -37,7 +37,7 @@ this.weapons = {
                 spin: .2
             },
             candyCorn: {
-                fire_rate: 1000, // 1/5 of a second in ms
+                fire_rate: 300, // 1/5 of a second in ms
                 power: 1,
                 range: 300,
                 speed: 6,
