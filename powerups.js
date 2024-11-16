@@ -204,7 +204,7 @@
             },
             'cc_rate': {
                 text: "Increase candy corn fire rate",
-                price: 100,
+                price: 200,
                 active: false,
                 page: 4,
                 target: 'candyCorn',
@@ -249,7 +249,7 @@
                 page: 4,
                 target: 'candyCorn',
                 updates: {
-                    range: 3000,
+                    range: 1000,
                 },
                 requires: 'cc_range'
             },
