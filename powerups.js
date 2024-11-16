@@ -1,4 +1,3 @@
-
         this.powerups = {
             'health_title': {
                 title: "Basic",
@@ -192,7 +191,7 @@
             },
             'candyCorn_title': {
                 title: "Candy Corn",
-                text: "Fires loads of short range candies all around you.",
+                text: "Fires a spread of candy.",
                 text2: "Great against quick enemies.",
                 page: 4
             },
@@ -320,7 +319,7 @@
             },
             'cottonCandy_title': {
                 title: "Cotton Candy",
-                text: "Drops a large ice cream that damages enemies that touch it.",
+                text: "Fires a large candy that slightly damages many foes.",
                 text2: "Great against large groups of weak enemies.",
                 page: 9
             },
@@ -635,7 +634,7 @@
             'bonbon_title': {
                 title: "BonBon",
                 text: "Low fire rate but high damage.",
-                text2: "Penetrates that enemies that it overcomes.",
+                text2: "Penetrates any enemie that it overcomes.",
                 page: 6
             },
             'bonbon_active': {
@@ -700,7 +699,7 @@
 
             'cupCake_title': {
                 title: "Cup Cake",
-                text: "Fires loads of short range cupcakes all around you.",
+                text: "Fires a cloud of cupcakes all around you.",
                 text2: "Great against quick enemies.",
                 page: 12
             },
