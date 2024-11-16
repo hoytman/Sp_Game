@@ -16,6 +16,12 @@
               -1, "func|fadeStars"
             ],
             [
+              -1, "func|fadeStars"
+            ],
+            [
+              -1, "func|gameMenu"
+            ],
+            [
                 0, "smallPumpkin|circle|r:20|s:150"
             ],
             [
