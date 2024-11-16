@@ -707,7 +707,7 @@ class Example extends Phaser.Scene {
     update(time, delta) {
         // Update cinematic scene if it's active
         // Check for 'q' key press to increase gameTimer
-        if(!this.musicLoaded){
+        if (!this.musicLoaded) {
             return;
         }
 
@@ -741,8 +741,9 @@ class Example extends Phaser.Scene {
                 this.fadeStars();
                 break;
             case 'gameMenu':
-                this.gameMenu();
-            break
+                //Removed
+                this.paused = false;
+                break
             case 'playBoneMusic':
                 this.playBoneMusic();
                 this.paused = false;
@@ -917,7 +918,7 @@ class Example extends Phaser.Scene {
 
         this.processDamageText(currentTime);
 
-        return; 
+        return;
         //
         //update dots
         for (let i = this.dots.length - 1; i >= 0; i--) {
@@ -1978,7 +1979,7 @@ class Example extends Phaser.Scene {
         this.moon.setScale(0.5);
         this.moon.setDepth(1001);
 
-                // Add the title
+        // Add the title
         this.title = this.add.text(400, 200, 'Halloween Battle', {
             fontSize: '64px',
             fontStyle: 'bold',
@@ -1988,17 +1989,32 @@ class Example extends Phaser.Scene {
         });
         this.title.setOrigin(0.5);
         this.title.setDepth(1002);
-
+        // Add instructions text
+        this.instructions = this.add.text(400, 280, 'Use the AWSD keys to move and aim with the mouse.\nAvoid enemies and try to kill the boss.', {
+            fontSize: '24px',
+            fontStyle: 'bold',
+            fill: '#ffffff',
+            align: 'center'
+        });
+        this.instructions.setOrigin(0.5);
+        this.instructions.setDepth(1002);
         // Add the play button
         this.playButton = this.add.text(400, 400, 'Play', {
             fontSize: '32px',
             fontStyle: 'bold',
             fill: '#ffffff',
             backgroundColor: '#000000',
-            padding: { left: 15, right: 15, top: 10, bottom: 10 }
+            padding: {
+                left: 15,
+                right: 15,
+                top: 10,
+                bottom: 10
+            }
         });
         this.playButton.setOrigin(0.5);
-        this.playButton.setInteractive({ useHandCursor: true });
+        this.playButton.setInteractive({
+            useHandCursor: true
+        });
         this.playButton.on('pointerdown', this.PlayGameButtonClick, this);
         this.playButton.setDepth(1002);
 
@@ -2031,22 +2047,21 @@ class Example extends Phaser.Scene {
             this.introOverlay.alpha -= .02;
             this.moon.alpha -= .02;
             this.title.alpha -= .02;
+            this.instructions.alpha -= .02; // Fade out instructions
             this.playButton.alpha -= .02;
             this.stars.forEach(star => {
                 star.alpha -= .02;
             });
         }
-
         this.cinematicStep += 1;
-
         // Remove cinematic elements when done
-
         if (this.cinematicStep == 50) {
             this.introOverlay.destroy();
             this.stars.forEach(star => star.destroy());
             this.stars = [];
             this.moon.destroy();
             this.title.destroy();
+            this.instructions.destroy(); // Destroy instructions
             this.playButton.destroy();
             this.cinematicStep = 0;
             this.paused = false;
