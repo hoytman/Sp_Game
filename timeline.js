@@ -25,11 +25,11 @@
                 0, 'smallPumpkin|circle|r:20'
             ],
             [
-                15, 'smallPumpkin|circle|r:0.015'
+                15, 'smallPumpkin|circle|r:0.015',
+                'func|playBossMusic'
             ],
             [
-                0, 'largePumpkin|circle|r:10|s:20',
-                'func|playBoneMusic'
+                0, 'largePumpkin|circle|r:10|s:20'
             ],
             [
                 30,
