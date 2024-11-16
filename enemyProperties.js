@@ -44,7 +44,7 @@
             greenMonster: {
                 size: 15,
                 tall: 60,
-                health: 80,
+                health: 120,
                 damage: 40,
                 scale: 0.28,
                 speed: 0.1
@@ -52,7 +52,7 @@
             largeGhost: {
                 size: 25,
                 tall: 80,
-                health: 60,
+                health: 100,
                 damage: 20,
                 scale: 0.35,
                 speed: 2.3
@@ -60,7 +60,7 @@
             largeSkeleton: {
                 size: 30,
                 tall: 90,
-                health: 30,
+                health: 80,
                 damage: 60,
                 scale: 0.4,
                 speed: 0.8
@@ -68,7 +68,7 @@
             witch: {
                 size: 18,
                 tall: 80,
-                health: 40,
+                health: 60,
                 damage: 30,
                 scale: 0.32,
                 speed: 0.2
@@ -76,7 +76,7 @@
             wolfEnemy: {
                 size: 15,
                 tall: 70,
-                health: 20,
+                health: I 50,
                 damage: 50,
                 scale: 0.25,
                 speed: 3.5
@@ -84,7 +84,7 @@
             mummy: {
                 size: 40,
                 tall: 80,
-                health: 40,
+                health: 100,
                 damage: 80,
                 scale: 0.30,
                 speed: 4
@@ -100,7 +100,7 @@
             largeBoss: {
                 size: 60,
                 tall: 100,
-                health: 200,
+                health: 2000,
                 damage: 120,
                 scale: 0.6,
                 speed: 0.1
