@@ -211,11 +211,7 @@ class Example extends Phaser.Scene {
 
         this.menuMusic = null;
 
-
-
         this.prologMusic.setLoop(true);
-
-
 
         this.currentMusic = this.introMusic;
         // Play intro music, then prolog
@@ -226,21 +222,42 @@ class Example extends Phaser.Scene {
             this.prologMusic.play();
         });
 
-
-
         // Create containers for the world objects
-
 
         this.leafContainer = this.add.container(0, 0);
         this.worldContainer = this.add.container(0, 0);
         this.frontWorldContainer = this.add.container(0, 0);
         // Set the background color to dark green
         this.cameras.main.setBackgroundColor('#006400');
-        // Create duplicate player
+
+        this.player = this.add.sprite(400, 300, 'player1');
+        this.player.setOrigin(0.5, 1); // Set origin to bottom center
+        this.player.setScale(0.2); // Make the player 80% smaller
+        this.player.setAlpha(0); // Make the player invisible
+        // Adjust player's position to account for new origin
+        this.player.y += this.player.height * this.player.scale * 0.5;
+        this.player.size = 20;
+        this.player.tall = 40;
+        // Initialize player coordinates
+        this.playerX = 0;
+        this.playerY = 0;
+        this.player.setDepth(0);
+
+        this.leafContainer.setDepth(10);
+        this.worldContainer.setDepth(20);
+        this.frontWorldContainer.setDepth(30);
+
         this.duplicatePlayer = this.add.sprite(400, 300, 'player1');
         this.duplicatePlayer.setOrigin(0.5, 1);
         this.duplicatePlayer.setScale(0.2);
         this.worldContainer.add(this.duplicatePlayer);
+
+        this.worldX = this.player.x - this.worldContainer.x;
+        this.worldY = this.player.y - this.worldContainer.y;
+        this.chestY = this.worldY - this.chestHeight;
+        this.duplicatePlayer.x = this.worldX;
+        this.duplicatePlayer.y = this.worldY;
+
         // Enable physics
         this.physics.world.setBounds(-this.MAX_WORLD_BOUND, -this.MAX_WORLD_BOUND, this.MAX_WORLD_BOUND * 2, this.MAX_WORLD_BOUND * 2);
         // Track mouse position
@@ -263,21 +280,7 @@ class Example extends Phaser.Scene {
         this.createRandomBackgroundObjects();
         // Create the player at the center of the screen
 
-        this.player = this.add.sprite(400, 300, 'player1');
-        this.player.setOrigin(0.5, 1); // Set origin to bottom center
-        this.player.setScale(0.2); // Make the player 80% smaller
-        this.player.setAlpha(0); // Make the player invisible
-        // Adjust player's position to account for new origin
-        this.player.y += this.player.height * this.player.scale * 0.5;
-        this.player.size = 20;
-        this.player.tall = 40;
-        // Initialize player coordinates
-        this.playerX = 0;
-        this.playerY = 0;
-        this.player.setDepth(0);
-        this.leafContainer.setDepth(10);
-        this.worldContainer.setDepth(20);
-        this.frontWorldContainer.setDepth(30);
+
 
         // Create walking animation
         this.anims.create({
@@ -1928,11 +1931,6 @@ class Example extends Phaser.Scene {
     */
 
     createStars() {
-        console.log('createStars:' + this.cinematicStep);
-        // Create a black overlay
-        // THis is now done in create to prevent flashing
-        //this.introOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000);
-        //this.introOverlay.setDepth(1000);
 
         // Create white spots for stars
         this.stars = [];
@@ -1944,7 +1942,7 @@ class Example extends Phaser.Scene {
             this.stars.push(star);
         }
         // Add the moon
-        this.moon = this.add.image(400, 700, 'moon');
+        this.moon = this.add.image(100, 100, 'moon');
         this.moon.setOrigin(0.5, 0.5);
         this.moon.setScale(0.5);
         this.moon.setDepth(1001);
@@ -1957,18 +1955,18 @@ class Example extends Phaser.Scene {
 
 
     slideStars() {
-        console.log('slideStars:' + this.cinematicStep);
         this.stars.forEach(star => {
-            star.y += this.scrollSpeed;
+            star.y += .3;
             if (star.y > 600) {
                 star.y = 0;
             }
         });
         // Move the moon
-        this.moon.y -= this.scrollSpeed * 0.5; // Move the moon slower than the stars
+        this.moon.y += .2; // Move the moon slower than the stars
+        this.moon.x += .1; // Move the moon slower than the stars
 
         this.cinematicStep += 1;
-        if (this.cinematicStep > 100) {
+        if (this.cinematicStep > 500) {
             this.cinematicStep = 1;
             this.paused = false;
         }
@@ -1978,11 +1976,17 @@ class Example extends Phaser.Scene {
         console.log('fadeStars:' + this.cinematicStep);
         // Scroll stars
 
-        let progress = 1 - (100 / (this.cinematicStep));
-
-        this.introOverlay.setAlpha(1 - progress);
+        if(this.introOverlay.alpha > 0){
+            this.introOverlay.alpha -= .01;
+            this.moon.alpha -= .01;
+            this.stars.forEach(star => {
+                star.alpha -= .01;
+            });
+        }
+        
         // Remove cinematic elements when done
-        if (this.cinematicStep == 100) {
+
+        if (this.cinematicStep == 200) {
             this.introOverlay.destroy();
             this.stars.forEach(star => star.destroy());
             this.stars = [];
