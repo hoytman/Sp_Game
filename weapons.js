@@ -41,9 +41,9 @@ this.weapons = {
                 power: 1,
                 range: 1500,
                 speed: 1,
-                size: 15,
+                size: 5,
                 spread: 30,
-                scale: 0.3,
+                scale: 0.2,
                 nextShotAt: 0,
                 spin: .03
             },
