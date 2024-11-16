@@ -25,8 +25,7 @@
                 0, 'smallPumpkin|circle|r:20'
             ],
             [
-                15, 'smallPumpkin|circle|r:0.015',
-                'func|playBossMusic'
+                15, 'smallPumpkin|circle|r:0.015'
             ],
             [
                 0, 'largePumpkin|circle|r:10|s:20'
@@ -52,7 +51,7 @@
             // Then add birdMummy to the mis
             [
                 0, 'birdMummy|angle|r:6|s:100',
-
+                'func|playBoneMusic'
             ],
             [
                 30,
@@ -99,7 +98,8 @@
             ],
             // Monster!
             [
-                0, 'greenMonster|circle|r:20'
+                0, 'greenMonster|circle|r:20',
+                'func|playMadnessMusic'
             ],
             [
                 20,
@@ -131,6 +131,7 @@
             ],
             [
                 0, 'whitch|angle|r:5|s:30'
+                'func|playEasyLevelMusic'
             ],
             [
                 35,
@@ -172,6 +173,9 @@
                 'blackBat|circle|r:0.01',
             ],
             [
+                0,'func|playRunMusic'
+            ],
+            [
                 30, 'wolfEnemy|circle|r:0.01'
             ],
             [
@@ -188,6 +192,13 @@
             ],
             [
                 20
+            ],
+            [
+                0, 'vineTiny|circle|r:20',
+                'func|playBossMusic'
+            ],
+            [
+                20, 'vineTiny|circle|r:0.03'
             ],
             [
                 0, 'largeBoss|angle|r:1'
