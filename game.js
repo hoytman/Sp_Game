@@ -1,8 +1,10 @@
 class Example extends Phaser.Scene {
     constructor() {
         super();
+        this.score = 0;
         this.timeline = []; // Initialize timeline as an empty array
         this.funcOverride = '';
+        this.musicLoaded = false;
         this.playingGame = false;
         this.background_objects = []; // Array to store background objects
         this.leaves = []; // Array to store all created leaves
@@ -180,6 +182,7 @@ class Example extends Phaser.Scene {
     }
     onPrologueMusicLoaded() {
         console.log('All assets loaded, including prologue music and other music tracks.');
+        this.musicLoaded = true;
     }
 
     create() {
@@ -704,6 +707,10 @@ class Example extends Phaser.Scene {
     update(time, delta) {
         // Update cinematic scene if it's active
         // Check for 'q' key press to increase gameTimer
+        if(!this.musicLoaded){
+            return;
+        }
+
         if (Phaser.Input.Keyboard.JustDown(this.qKey)) {
             this.gameTimer += 10000;
             console.log('Game timer increased by 10 seconds. New time:', Math.floor(this.gameTimer / 1000));
@@ -784,6 +791,7 @@ class Example extends Phaser.Scene {
             ) {
                 if (Phaser.Math.Distance.Between(this.worldX, this.worldY, leaf.x, leaf.y) < 10) {
                     this.collectedLeaves++;
+                    this.score += 5;
                     leaf.destroy();
                     this.leaves.splice(i, 1);
                     const currentTime = this.time.now;
@@ -1502,6 +1510,7 @@ class Example extends Phaser.Scene {
         const currentTime = this.time.now;
         if (enemy.health <= 0) {
             // Play destroy sound when enemy is destroyed
+            this.score += enemy.settings.health;
             if (currentTime - this.lastEnemySoundTime > 100) { // 100ms = 0.1 seconds
                 this.sound.play('enemyDestroySound');
                 this.lastEnemySoundTime = currentTime;
@@ -1834,6 +1843,7 @@ class Example extends Phaser.Scene {
         };
         if (this.textNotCreated) {
             this.textFields = [
+                'Score',
                 'Leaves',
                 'Timer',
             ];
@@ -1846,6 +1856,7 @@ class Example extends Phaser.Scene {
             this.textNotCreated = false;
         }
         const texts = [
+            `${this.score}`,
             `${this.collectedLeaves}`,
             `${Math.floor(this.gameTimer / 1000)}`,
         ];
@@ -1950,20 +1961,6 @@ class Example extends Phaser.Scene {
 
     // Movies
 
-    /*
-                    break;
-                case 'createStars':
-                    this.createStars();
-                break;
-                case 'slideStars':
-                    this.slideStars();
-                break;
-                case 'fadeStars':
-                    this.fadeStars();
-                break;
-            }
-    */
-
     createStars() {
 
         // Create white spots for stars
@@ -1981,9 +1978,36 @@ class Example extends Phaser.Scene {
         this.moon.setScale(0.5);
         this.moon.setDepth(1001);
 
+                // Add the title
+        this.title = this.add.text(400, 200, 'Halloween Battle', {
+            fontSize: '64px',
+            fontStyle: 'bold',
+            fill: '#ff8800',
+            stroke: '#000000',
+            strokeThickness: 6
+        });
+        this.title.setOrigin(0.5);
+        this.title.setDepth(1002);
+
+        // Add the play button
+        this.playButton = this.add.text(400, 400, 'Play', {
+            fontSize: '32px',
+            fontStyle: 'bold',
+            fill: '#ffffff',
+            backgroundColor: '#000000',
+            padding: { left: 15, right: 15, top: 10, bottom: 10 }
+        });
+        this.playButton.setOrigin(0.5);
+        this.playButton.setInteractive({ useHandCursor: true });
+        this.playButton.on('pointerdown', this.PlayGameButtonClick, this);
+        this.playButton.setDepth(1002);
+
         // Set up variables for the cinematic effect
         this.cinematicStep = 0;
+        this.paused = false;
+    }
 
+    PlayGameButtonClick() {
         this.paused = false;
     }
 
@@ -1997,43 +2021,39 @@ class Example extends Phaser.Scene {
         });
         // Move the moon
         this.moon.y += .2; // Move the moon slower than the stars
-        this.moon.x += .1; // Move the moon slower than the stars
 
-        this.cinematicStep += 1;
-        if (this.cinematicStep > 500) {
-            this.cinematicStep = 1;
-            this.paused = false;
-        }
     }
 
     fadeStars() {
         // Scroll stars
 
         if (this.introOverlay.alpha > 0) {
-            this.introOverlay.alpha -= .01;
-            this.moon.alpha -= .01;
+            this.introOverlay.alpha -= .02;
+            this.moon.alpha -= .02;
+            this.title.alpha -= .02;
+            this.playButton.alpha -= .02;
             this.stars.forEach(star => {
-                star.alpha -= .01;
+                star.alpha -= .02;
             });
         }
 
+        this.cinematicStep += 1;
+
         // Remove cinematic elements when done
 
-        if (this.cinematicStep == 200) {
+        if (this.cinematicStep == 50) {
             this.introOverlay.destroy();
             this.stars.forEach(star => star.destroy());
             this.stars = [];
             this.moon.destroy();
+            this.title.destroy();
+            this.playButton.destroy();
             this.cinematicStep = 0;
             this.paused = false;
             return;
         }
 
         this.slideStars();
-    }
-
-    gameMenu() {
-
     }
 
     playBoneMusic() {
