@@ -1,7 +1,7 @@
 class Example extends Phaser.Scene {
     constructor() {
         super();
-        this.score = 0;
+        this.score = 10000;
         this.timeline = []; // Initialize timeline as an empty array
         this.funcOverride = '';
         this.musicLoaded = false;
@@ -28,8 +28,8 @@ class Example extends Phaser.Scene {
         this.cursors;
         this.playerX = 0;
         this.playerY = 0;
-        this.playerHealth = 400;
-        this.playerMaxHealth = 400;
+        this.playerHealth = 500;
+        this.playerMaxHealth = 500;
         this.healthBar;
         this.lastDamageTime = 0;
         this.lastEnemySoundTime = 0; // New variable to track the last time enemy sound was played
@@ -609,9 +609,9 @@ class Example extends Phaser.Scene {
             // Additional updates
             switch (key) {
                 case 'more_health':
-                    this.playerHealth += 100;
+                    this.playerHealth += 50;
                     if (this.playerHealth > this.playerMaxHealth) {
-                        this.playerHealth = 1000;
+                        this.playerHealth = this.playerMaxHealth;
                     }
                     break;
 
@@ -1518,6 +1518,12 @@ class Example extends Phaser.Scene {
         enemy.health -= damage;
         this.createDamageText(enemy.x, enemy.y, damage);
         const currentTime = this.time.now;
+
+        // Update health bar if it exists
+        if (enemy.updateHealthBar) {
+            enemy.updateHealthBar();
+        }
+
         if (enemy.health <= 0) {
             // Play destroy sound when enemy is destroyed
             this.score += enemy.settings.health;
@@ -1536,12 +1542,16 @@ class Example extends Phaser.Scene {
                 // Spawn two little skeletons
                 this.addEnemy('smallSkeleton', enemy.x, enemy.y, this.enemyProperties.smallSkeleton);
                 this.addEnemy('smallSkeleton', enemy.x - 20, enemy.y, this.enemyProperties.smallSkeleton);
-
                 this.addEnemy('birdMummy', enemy.x + 20, enemy.y, this.enemyProperties.birdMummy);
                 this.addEnemy('birdMummy', enemy.x, enemy.y + 20, this.enemyProperties.birdMummy);
                 this.addEnemy('birdMummy', enemy.x, enemy.y - 20, this.enemyProperties.birdMummy);
-
             }
+
+            // Destroy health bar container if it exists
+            if (enemy.healthBarContainer) {
+                enemy.healthBarContainer.destroy();
+            }
+
             enemy.destroy();
             this.enemies.splice(ind, 1);
         } else {
@@ -1553,6 +1563,7 @@ class Example extends Phaser.Scene {
         }
     }
     createDamageText(x, y, damage) {
+        return;
         const text = this.add.text(x, y, damage.toString(), {
             font: '26px Arial',
             fill: '#ff0000'
@@ -1564,6 +1575,7 @@ class Example extends Phaser.Scene {
     }
 
     processDamageText(currentTime) {
+        return;
         for (let j = 0; j < this.damageTexts.length; j++) {
             let myText = this.damageTexts[j];
             if (currentTime > myText.removeAt) {
@@ -1772,6 +1784,11 @@ class Example extends Phaser.Scene {
                 }
                 enemy.x += Math.cos(angle) * speed;
                 enemy.y += Math.sin(angle) * speed;
+
+                // Update health bar position if it exists
+                if (enemy.updateHealthBar) {
+                    enemy.updateHealthBar();
+                }
             }
             if (enemy.settings.type == 'witch') {
                 if (Math.random() < .005) {
@@ -1805,6 +1822,32 @@ class Example extends Phaser.Scene {
         enemy.isContained = true;
         this.enemies.push(enemy);
         this.worldContainer.add(enemy);
+        // Check if the enemy is a boss
+        if (enemyType === 'largeBoss' || enemyType === 'smallBoss') {
+            // Create health bar container
+            enemy.healthBarContainer = this.add.container(enemyX, enemyY - 200);
+
+            // Create background for health bar
+            const healthBarBackground = this.add.rectangle(0, 0, 200, 20, 0x000000);
+
+            // Create health bar
+            enemy.healthBar = this.add.rectangle(0, 0, 200, 20, 0xff0000);
+
+            // Add background and health bar to container
+            enemy.healthBarContainer.add(healthBarBackground);
+            enemy.healthBarContainer.add(enemy.healthBar);
+
+            // Add container to world container
+            this.worldContainer.add(enemy.healthBarContainer);
+
+            // Update health bar function
+            enemy.updateHealthBar = () => {
+                const healthPercentage = enemy.health / settings.health;
+                enemy.healthBar.width = 200 * healthPercentage;
+                enemy.healthBarContainer.x = enemy.x;
+                enemy.healthBarContainer.y = enemy.y - 200;
+            };
+        }
     }
 
 
@@ -1953,15 +1996,12 @@ class Example extends Phaser.Scene {
     gameOverScreen() {
         // Save the high score
         this.saveHighScore(this.score);
-
         // Remove all enemies
         this.enemies.forEach(enemy => enemy.destroy());
         this.enemies = [];
-
         this.introOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000);
         this.introOverlay.setDepth(1000);
-
-                // Add the title
+        // Add the title
         this.title = this.add.text(400, 50, 'Game Over', {
             fontSize: '64px',
             fontStyle: 'bold',
@@ -1974,7 +2014,7 @@ class Example extends Phaser.Scene {
 
         // Add instructions text
         this.instructions = this.add.text(400, 120,
-            'Please refreash to try again', {
+            'Please refresh to try again', {
                 fontSize: '24px',
                 fontStyle: 'bold',
                 fill: '#ffffff',
@@ -1982,6 +2022,131 @@ class Example extends Phaser.Scene {
             });
         this.instructions.setOrigin(0.5);
         this.instructions.setDepth(1002);
+        // Add high score list
+
+        const highScores = this.getHighScores();
+
+        this.highScoreList = this.add.text(400, 160, 'Top 10 Scores:', {
+            fontSize: '24px',
+            fill: '#ffffff',
+            align: 'center',
+            lineSpacing: 10
+        });
+        this.highScoreList.setOrigin(0.5);
+        this.highScoreList.setDepth(1002);
+        this.highScoreList.setColor('#ffffff');
+
+
+        for (let i = 0; i < 10; i++) {
+            if (i < highScores.length) {
+                if (highScores[i] === this.score) {
+
+                    this.highScoreList = this.add.text(400, 190 + i * 30, (i + 1) + ': ' + highScores[i], {
+                        fontSize: '24px',
+                        fill: '#ffffff',
+                        align: 'center',
+                        lineSpacing: 10
+                    });
+                    this.highScoreList.setOrigin(0.5);
+                    this.highScoreList.setDepth(1002);
+                    this.highScoreList.setColor('#ff6666');
+
+                } else {
+                    this.highScoreList = this.add.text(400, 190 + i * 30, (i + 1) + ': ' + highScores[i], {
+                        fontSize: '24px',
+                        fill: '#ffffff',
+                        align: 'center',
+                        lineSpacing: 10
+                    });
+                    this.highScoreList.setOrigin(0.5);
+                    this.highScoreList.setDepth(1002);
+                    this.highScoreList.setColor('#ffffff');
+                }
+            } else {
+                scoreText += `${i + 1}. -------\n`;
+            }
+        }
+
+    }
+
+
+
+    youWinScreen() {
+
+        this.playWinMusic();
+
+        // Save the high score
+        this.saveHighScore(this.score);
+        // Remove all enemies
+        this.enemies.forEach(enemy => enemy.destroy());
+        this.enemies = [];
+        this.introOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000);
+        this.introOverlay.setDepth(1000);
+        // Add the title
+        this.title = this.add.text(400, 50, 'You Win!!', {
+            fontSize: '64px',
+            fontStyle: 'bold',
+            fill: '#ff8800',
+            stroke: '#000000',
+            strokeThickness: 6
+        });
+        this.title.setOrigin(0.5);
+        this.title.setDepth(1002);
+
+        // Add instructions text
+        this.instructions = this.add.text(400, 120,
+            'Please refresh to try again', {
+                fontSize: '24px',
+                fontStyle: 'bold',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.instructions.setOrigin(0.5);
+        this.instructions.setDepth(1002);
+        // Add high score list
+
+        const highScores = this.getHighScores();
+
+        this.highScoreList = this.add.text(400, 160, 'Top 10 Scores:', {
+            fontSize: '24px',
+            fill: '#ffffff',
+            align: 'center',
+            lineSpacing: 10
+        });
+        this.highScoreList.setOrigin(0.5);
+        this.highScoreList.setDepth(1002);
+        this.highScoreList.setColor('#ffffff');
+
+
+        for (let i = 0; i < 10; i++) {
+            if (i < highScores.length) {
+                if (highScores[i] === this.score) {
+
+                    this.highScoreList = this.add.text(400, 190 + i * 30, (i + 1) + ': ' + highScores[i], {
+                        fontSize: '24px',
+                        fill: '#ffffff',
+                        align: 'center',
+                        lineSpacing: 10
+                    });
+                    this.highScoreList.setOrigin(0.5);
+                    this.highScoreList.setDepth(1002);
+                    this.highScoreList.setColor('#ff6666');
+
+                } else {
+                    this.highScoreList = this.add.text(400, 190 + i * 30, (i + 1) + ': ' + highScores[i], {
+                        fontSize: '24px',
+                        fill: '#ffffff',
+                        align: 'center',
+                        lineSpacing: 10
+                    });
+                    this.highScoreList.setOrigin(0.5);
+                    this.highScoreList.setDepth(1002);
+                    this.highScoreList.setColor('#ffffff');
+                }
+            } else {
+                scoreText += `${i + 1}. -------\n`;
+            }
+        }
 
     }
 
