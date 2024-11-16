@@ -180,7 +180,7 @@
                 0,"func|playRunMusic"
             ],
             [
-                30, "wolfEnemy|circle|r:0.01"
+                30, "wolfEnemy|circle|r:0.03"
             ],
             [
                 20, "witch|circle|r:0.03",
@@ -192,7 +192,7 @@
                 20
             ],
             [
-                30, "mummy|circle|r:0.01"
+                30, "mummy|circle|r:0.03"
             ],
             [
                 20
@@ -211,30 +211,30 @@
                 10, "vineTiny|circle|r:0.03"
             ],
             [
-                0, "vineSmall|angle|r:40|s:50"
+                0, "vineSmall|angle|r:40|s:20"
             ],
             [
-                10, "vineTiny|circle|r:0.03",
-                "vineSmall|circle|r:0.03",
-                "vineBig|circle|r:0.03",
+                10, "vineTiny|circle|r:0.1",
+                "vineSmall|circle|r:0.1",
+                "vineBig|circle|r:0.1",
             ],
             [
-                0, "vineHuge|circle|r:40"
-            ],
-            [
-                10
-            ],
-            [
-                0, "vineGiant|circle|r:40"
+                0, "vineHuge|circle|r:20"
             ],
             [
                 10
             ],
             [
-                10, "vineTiny|circle|r:0.02",
-                "vineSmall|circle|r:0.02",
-                "vineBig|circle|r:0.02",
-                "vineHuge|circle|r:0.005",
-                "vineGiant|circle|r:0.002"
+                0, "vineGiant|circle|r:20"
+            ],
+            [
+                10
+            ],
+            [
+                10, "vineTiny|circle|r:0.1",
+                "vineSmall|circle|r:0.1",
+                "vineBig|circle|r:0.1",
+                "vineHuge|circle|r:0.1",
+                "vineGiant|circle|r:0.1"
             ]
         ];
