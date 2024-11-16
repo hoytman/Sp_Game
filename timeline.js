@@ -130,7 +130,7 @@
                 'largeSkeleton|circle|r:0.01',
             ],
             [
-                0, 'whitch|angle|r:5|s:30'
+                0, 'whitch|angle|r:5|s:30',
                 'func|playEasyLevelMusic'
             ],
             [
