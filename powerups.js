@@ -238,7 +238,7 @@
                 page: 4,
                 target: 'candyCorn',
                 updates: {
-                    range: 2000,
+                    range: 600,
                 },
                 requires: 'cc_active'
             },
