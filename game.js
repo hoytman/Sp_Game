@@ -3,17 +3,18 @@ class Example extends Phaser.Scene {
         super();
         this.timeline = []; // Initialize timeline as an empty array
         this.funcOverride = '';
+        this.playingGame = false;
         this.background_objects = []; // Array to store background objects
         this.leaves = []; // Array to store all created leaves
         this.lastLeafSoundTime = 0; // New variable to track last leaf sound time
         this.damageTexts = []; // Array to store damage texts
         this.leafSize = 20;
-        this.collectedLeaves = 100; // Variable to track collected leaves
+        this.collectedLeaves = 10000; // Variable to track collected leaves
         this.lastFired = 0;
         this.paused = false;
         this.MAX_WORLD_BOUND = 5000; // New constant for maximum world-bound distance
         this.ENEMY_SPAWN_DISTANCE = 400; // New constant for enemy spawn distance
-        this.ENEMY_REMOVAL_DISTANCE = 800; // New constant for enemy removal distance
+        this.ENEMY_REMOVAL_DISTANCE = 1500; // New constant for enemy removal distance
         this.MIN_OBJECT_DISTANCE = 200; // Minimum distance between objects
         this.textNotCreated = true; // Initialize textNotCreated
         this.player;
@@ -182,6 +183,9 @@ class Example extends Phaser.Scene {
     }
 
     create() {
+        // Add key listener for 'q'
+        this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+
         // Load the timeline and powerups from the external scripts
         if (window.timeline) {
             this.timeline = window.timeline;
@@ -352,7 +356,7 @@ class Example extends Phaser.Scene {
             this.menuMusic.setLoop(true);
         }
 
-        this.currentMusic.mute = true;
+        this.currentMusic.pause();
         this.menuMusic.play();
         this.fillShop();
     }
@@ -543,7 +547,7 @@ class Example extends Phaser.Scene {
         if (this.shopNextButton) this.shopNextButton.destroy();
         // Stop menu music and resume game music
         this.menuMusic.stop();
-        this.currentMusic.mute = false;
+        this.currentMusic.resume();
 
     }
 
@@ -699,10 +703,16 @@ class Example extends Phaser.Scene {
     }
     update(time, delta) {
         // Update cinematic scene if it's active
-
+        // Check for 'q' key press to increase gameTimer
+        if (Phaser.Input.Keyboard.JustDown(this.qKey)) {
+            this.gameTimer += 10000;
+            console.log('Game timer increased by 10 seconds. New time:', Math.floor(this.gameTimer / 1000));
+        }
         // Check for spacebar press to toggle shop
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
-            this.toggleShop();
+            if (this.playingGame) {
+                this.toggleShop();
+            }
         }
         // Update text displays
         this.updateTextDisplays();
@@ -723,30 +733,33 @@ class Example extends Phaser.Scene {
             case 'fadeStars':
                 this.fadeStars();
                 break;
+            case 'gameMenu':
+                this.gameMenu();
+            break
             case 'playBoneMusic':
                 this.playBoneMusic();
                 this.paused = false;
-            break;
+                break;
             case 'playMadnessMusic':
                 this.playMadnessMusic();
                 this.paused = false;
-            break;
+                break;
             case 'playWinMusic':
                 this.playWinMusic();
                 this.paused = false;
-            break;
+                break;
             case 'playRunMusic':
                 this.playRunMusic();
                 this.paused = false;
-            break;
+                break;
             case 'playEasyLevelMusic':
                 this.playEasyLevelMusic();
                 this.paused = false;
-            break;
+                break;
             case 'playBossMusic':
                 this.playBossMusic();
                 this.paused = false;
-            break;
+                break;
         }
 
         if (this.paused) {
@@ -896,7 +909,7 @@ class Example extends Phaser.Scene {
 
         this.processDamageText(currentTime);
 
-
+        return; 
         //
         //update dots
         for (let i = this.dots.length - 1; i >= 0; i--) {
@@ -1526,10 +1539,9 @@ class Example extends Phaser.Scene {
             fill: '#ff0000'
         });
         text.setOrigin(0.5, 0.5);
-        text.removeAt = this.time.now + 300;
+        text.removeAt = this.time.now + 100;
         this.frontWorldContainer.add(text);
         this.damageTexts.push(text);
-
     }
 
     processDamageText(currentTime) {
@@ -1540,7 +1552,7 @@ class Example extends Phaser.Scene {
                 this.damageTexts.splice(j, 1);
                 return;
             } else {
-                myText.y -= 4;
+                myText.y -= 8;
             }
         }
     }
@@ -1650,7 +1662,7 @@ class Example extends Phaser.Scene {
         }
 
         if (enemiesToSpawn > 0) {
-
+            this.playingGame = true;
             let spawn_distance = this.ENEMY_SPAWN_DISTANCE;
 
             if ('spawn_distance' in settings) {
@@ -1997,14 +2009,14 @@ class Example extends Phaser.Scene {
     fadeStars() {
         // Scroll stars
 
-        if(this.introOverlay.alpha > 0){
+        if (this.introOverlay.alpha > 0) {
             this.introOverlay.alpha -= .01;
             this.moon.alpha -= .01;
             this.stars.forEach(star => {
                 star.alpha -= .01;
             });
         }
-        
+
         // Remove cinematic elements when done
 
         if (this.cinematicStep == 200) {
@@ -2020,42 +2032,51 @@ class Example extends Phaser.Scene {
         this.slideStars();
     }
 
-    playBoneMusic(){
+    gameMenu() {
+
+    }
+
+    playBoneMusic() {
         this.boneMusic = this.sound.add('boneMusic');
         this.currentMusic.stop();
+        this.boneMusic.setLoop(true);
         this.boneMusic.play();
         this.currentMusic = this.boneMusic;
     }
 
-    playMadnessMusic(){
+    playMadnessMusic() {
         this.madnessMusic = this.sound.add('madnessMusic');
         this.currentMusic.stop();
+        this.madnessMusic.setLoop(true);
         this.madnessMusic.play();
         this.currentMusic = this.madnessMusic;
     }
 
-    playWinMusic(){
+    playWinMusic() {
         this.winMusic = this.sound.add('winMusic');
         this.currentMusic.stop();
+        this.winMusic.setLoop(true);
         this.winMusic.play();
         this.currentMusic = this.winMusic;
     }
 
-    playRunMusic(){
+    playRunMusic() {
         this.runMusic = this.sound.add('runMusic');
         this.currentMusic.stop();
+        this.runMusic.setLoop(true);
         this.runMusic.play();
         this.currentMusic = this.runMusic;
     }
 
-    playEasyLevelMusic(){
+    playEasyLevelMusic() {
         this.easyLevelMusic = this.sound.add('easyLevelMusic');
         this.currentMusic.stop();
+        this.easyLevelMusic.setLoop(true);
         this.easyLevelMusic.play();
         this.currentMusic = this.easyLevelMusic;
     }
 
-    playBossMusic(){
+    playBossMusic() {
         this.bossIntro = this.sound.add('bossIntroMusic');
         this.bossMusic = this.sound.add('bossMusic');
 
@@ -2063,9 +2084,10 @@ class Example extends Phaser.Scene {
         this.currentMusic.stop();
         this.currentMusic = this.bossIntro;
         // Play intro music, then prolog
-        
+
         this.bossIntro.once('complete', () => {
             this.currentMusic = this.bossMusic;
+            this.bossMusic.setLoop(true);
             this.bossMusic.play();
         });
     }
