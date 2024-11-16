@@ -19,9 +19,6 @@
               -1, "func|fadeStars"
             ],
             [
-              -1, "func|gameMenu"
-            ],
-            [
                 0, "smallPumpkin|circle|r:20|s:150"
             ],
             [
@@ -160,6 +157,7 @@
                 "witch|circle|r:0.01",
             ],
             [
+              25,
                 "largeSkeleton|circle|r:0.01",
                 "witch|circle|r:0.01",
             ],
