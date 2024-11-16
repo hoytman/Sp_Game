@@ -437,20 +437,20 @@
                 title: "Ice Cream",
                 text: "Stays still and damages enemies that encounter it.",
                 text2: "Breaks up into addtional smaller ice creams when hit.",
-                page: 12
+                page: 11
             },
             'icecream_active': {
                 text: "Buy the Ice Cream Weapon",
                 price: 200,
                 active: false,
-                page: 12,
+                page: 11,
                 requires: 'weaponSlots'
             },
             'icecream_rate': {
                 text: "Increase Ice Cream fire rate",
                 price: 100,
                 active: false,
-                page: 12,
+                page: 11,
                 target: 'iceCream',
                 updates: {
                     fire_rate: 1200
@@ -461,7 +461,7 @@
                 text: "Increase Ice Cream damage",
                 price: 100,
                 active: false,
-                page: 12,
+                page: 11,
                 target: 'iceCream',
                 updates: {
                     power: 2,
@@ -472,7 +472,7 @@
                 text: "Ice Cream lasts longer",
                 price: 100,
                 active: false,
-                page: 12,
+                page: 11,
                 target: 'iceCream',
                 updates: {
                     range: 10000,
@@ -483,7 +483,7 @@
                 text: "Ice cream gains another generation",
                 price: 200,
                 active: false,
-                page: 12,
+                page: 11,
                 target: 'iceCream',
                 updates: {
                     generationMax: 4,
@@ -595,24 +595,25 @@
                 },
                 requires: 'peppermint_active'
             },
+                /*
             'cake_title': {
                 title: "Cake",
                 text: "Large Powerful attack.",
                 text2: "Great against big enemies.",
-                page: 11
+                page: X
             },
             'cake_active': {
                 text: "Buy the Cake Weapon",
                 price: 200,
                 active: false,
-                page: 11,
+                page: X,
                 requires: 'weaponSlots'
             },
             'cake_rate': {
                 text: "Increase Cake fire rate",
                 price: 100,
                 active: false,
-                page: 11,
+                page: X,
                 target: 'cake',
                 updates: {
                     fire_rate: 1200
@@ -623,13 +624,14 @@
                 text: "Increase Cake damage",
                 price: 100,
                 active: false,
-                page: 11,
+                page: X,
                 target: 'cake',
                 updates: {
                     power: 2,
                 },
                 requires: 'cake_active'
             },
+            */
             'bonbon_title': {
                 title: "BonBon",
                 text: "Low fire rate but high damage.",
@@ -700,20 +702,20 @@
                 title: "Cup Cake",
                 text: "Fires loads of short range cupcakes all around you.",
                 text2: "Great against quick enemies.",
-                page: 13
+                page: 12
             },
             'cupCake_active': {
                 text: "Buy the Cup Cake Weapon",
                 price: 100,
                 active: false,
-                page: 13,
+                page: 12,
                 requires: 'weaponSlots'
             },
             'cupCake_rate': {
                 text: "Increase cup cake fire rate",
                 price: 80,
                 active: false,
-                page: 13,
+                page: 12,
                 target: 'cupCake',
                 updates: {
                     fire_rate: 500
@@ -724,7 +726,7 @@
                 text: "Increase cup cake fire rate more",
                 price: 160,
                 active: false,
-                page: 13,
+                page: 12,
                 target: 'cupCake',
                 updates: {
                     fire_rate: 300
@@ -735,7 +737,7 @@
                 text: "Increase cup cake damage",
                 price: 200,
                 active: false,
-                page: 13,
+                page: 12,
                 target: 'cupCake',
                 updates: {
                     power: 2,
@@ -746,14 +748,14 @@
                 text: "Fire More cup cakes each time",
                 price: 500,
                 active: false,
-                page: 13,
+                page: 12,
                 requires: 'cupCake_active'
             },
             'cupCake_range': {
                 text: "cup cakes last longer",
                 price: 100,
                 active: false,
-                page: 13,
+                page: 12,
                 target: 'cupCake',
                 updates: {
                     range: 3000,
