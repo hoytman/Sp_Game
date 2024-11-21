@@ -116,7 +116,7 @@
                 "blackBat|circle|r:0.01|s:100"
             ],
             [
-                0, "largeGhost|angle|r:5|s:50"
+                0, "largeGhost|angle|r:5|s:150"
             ],
             [
                 40,
@@ -133,7 +133,7 @@
                 "largeSkeleton|circle|r:0.01",
             ],
             [
-                0, "witch|angle|r:5|s:30",
+                0, "witch|angle|r:5|s:200",
                 "func|playEasyLevelMusic"
             ],
             [
@@ -189,7 +189,7 @@
                 20, "wolfEnemy|circle|r:0.03"
             ],
             [
-                0, "greenMonster|angle|r:6|s:10"
+                0, "greenMonster|angle|r:6|s:200"
             ],
             [
                 30, "mummy|circle|r:0.03"
