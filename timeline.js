@@ -185,7 +185,7 @@
             [
                 0, "witch|circle|r:6",
             ],
-    [
+            [
                 20, "wolfEnemy|circle|r:0.03"
             ],
             [
