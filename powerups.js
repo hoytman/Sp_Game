@@ -133,7 +133,7 @@
                 },
                 requires: 'weaponSlot5'
             },
-            'weaponSlot6': {
+            'weaponSlot7': {
                 text: "Increase weapon slots from 6 to 7",
                 price: 5000,
                 active: false,
@@ -209,7 +209,7 @@
                 page: 4,
                 target: 'candyCorn',
                 updates: {
-                    fire_rate: 800
+                    fire_rate: 180
                 },
                 requires: 'cc_active'
             },
@@ -249,7 +249,7 @@
                 page: 4,
                 target: 'candyCorn',
                 updates: {
-                    range: 1000,
+                    range: 900,
                 },
                 requires: 'cc_range'
             },
