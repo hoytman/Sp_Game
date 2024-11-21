@@ -1,7 +1,8 @@
 class Example extends Phaser.Scene {
     constructor() {
         super();
-        this.score = 10000;
+        this.cheatActive = true
+        this.score = 0;
         this.timeline = []; // Initialize timeline as an empty array
         this.funcOverride = '';
         this.musicLoaded = false;
@@ -11,7 +12,7 @@ class Example extends Phaser.Scene {
         this.lastLeafSoundTime = 0; // New variable to track last leaf sound time
         this.damageTexts = []; // Array to store damage texts
         this.leafSize = 20;
-        this.collectedLeaves = 10000; // Variable to track collected leaves
+        this.collectedLeaves = 100; // Variable to track collected leaves
         this.lastFired = 0;
         this.paused = false;
         this.MAX_WORLD_BOUND = 5000; // New constant for maximum world-bound distance
@@ -47,6 +48,7 @@ class Example extends Phaser.Scene {
         this.filledWeaponSlots = 1;
         this.objectDepthSort = [];
         this.objectDepthSortStep = 0;
+        this.gameIsDone = false;
         // Timeline
 
         //Key Words:
@@ -187,8 +189,21 @@ class Example extends Phaser.Scene {
     }
 
     create() {
+        if(this.cheatActive){
+             this.collectedLeaves = 9999999;
+        }
         // Add key listener for 'q'
         this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        // Create the red diamond
+        this.redArrow = this.add.graphics();
+        this.redArrow.fillStyle(0xff0000, 1);
+        this.redArrow.beginPath();
+        this.redArrow.moveTo(0, 0);
+        this.redArrow.lineTo(-20, -20);
+        this.redArrow.lineTo(20, -20);
+        this.redArrow.closePath();
+        this.redArrow.fillPath();
+        this.redArrow.setDepth(10000);
         // Add event listener for window blur
         window.addEventListener('blur', () => {
             if (this.playingGame && !this.paused) {
@@ -308,6 +323,7 @@ class Example extends Phaser.Scene {
         // Set up keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
         // Initialize text fields
+
         // Create health bar
         this.healthBar = this.add.rectangle(775, 30, 500, 20, 0x00ff00);
         this.healthBar.setOrigin(1, 0.5);
@@ -318,8 +334,36 @@ class Example extends Phaser.Scene {
         this.healthBarBackground.setOrigin(1, 0.5);
         this.healthBarBackground.setScrollFactor(0);
         this.healthBarBackground.setDepth(99);
+
+
+        // Create health bar
+        this.BossHealthBar = this.add.rectangle(775, 52, 500, 20, 0x00ff00);
+        this.BossHealthBar.setOrigin(1, 0.5);
+        this.BossHealthBar.setScrollFactor(0);
+        this.BossHealthBar.setDepth(100);
+        
+
+        // Create health bar background
+        this.BossHealthBarBG = this.add.rectangle(775, 52, 500, 20, 0xff0000);
+        this.BossHealthBarBG.setOrigin(1, 0.5);
+        this.BossHealthBarBG.setScrollFactor(0);
+        this.BossHealthBarBG.setDepth(99);
+
+        this.BossHealthTitle = this.add.text(268, 60, 'Boss Health', {
+            font: '20px Arial',
+            fill: '#ffffff',
+            padding: {
+                x: 10,
+                y: 5
+            }
+        });
+
+        this.BossHealthBar.alpha = 0;
+        this.BossHealthBarBG.alpha = 0;
+        this.BossHealthTitle.alpha = 0;
+
         // Create shop button
-        this.shopButton = this.add.text(775, 70, 'Press SPACE to toggle shop', {
+        this.shopButton = this.add.text(775, 80, 'Press SPACE to toggle shop', {
             font: '20px Arial',
             fill: '#ffffff',
             backgroundColor: '#000000',
@@ -709,15 +753,21 @@ class Example extends Phaser.Scene {
         return false;
     }
     update(time, delta) {
+        if(this.gameIsDone == true){
+            return;
+        }
+
         // Update cinematic scene if it's active
         // Check for 'q' key press to increase gameTimer
         if (!this.musicLoaded) {
             return;
         }
+        // Update red diamond position to follow the mouse
+        this.redArrow.x = this.input.mousePointer.x;
+        this.redArrow.y = this.input.mousePointer.y;
 
-        if (Phaser.Input.Keyboard.JustDown(this.qKey)) {
+        if (this.cheatActive && Phaser.Input.Keyboard.JustDown(this.qKey)) {
             this.gameTimer += 10000;
-            console.log('Game timer increased by 10 seconds. New time:', Math.floor(this.gameTimer / 1000));
         }
         // Check for spacebar press to toggle shop
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
@@ -1392,7 +1442,7 @@ class Example extends Phaser.Scene {
                     let enemyHealth = enemy.health;
                     this.hitEnemy(enemy, myBullet, j);
                     // Destroy Bean
-                    if (enemyHealth > myBullet.settings.power) {
+                    if (enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss' || enemyHealth > myBullet.settings.power) {
                         this.activeBullets[myBulletGroupName].splice(ind, 1);
                         myBullet.destroy();
                     }
@@ -1486,6 +1536,10 @@ class Example extends Phaser.Scene {
                 if (this.checkForCollision(enemy, myBullet, false, false, true)) {
                     this.hitEnemy(enemy, myBullet, j);
                 }
+                if (enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss') {
+                        this.activeBullets[myBulletGroupName].splice(ind, 1);
+                        myBullet.destroy();
+                }
             }
         }
     }
@@ -1505,10 +1559,13 @@ class Example extends Phaser.Scene {
                     myBullet.vSpeed = Math.sin(angle) * myBullet.settings.speed;
                     this.hitEnemy(enemy, myBullet, j);
                 }
+                if (enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss') {
+                    this.activeBullets[myBulletGroupName].splice(ind, 1);
+                    myBullet.destroy();
+                }
             }
         }
     }
-
 
     hitEnemy(enemy, bullet, ind) {
         const damage = bullet.settings.power;
@@ -1518,11 +1575,6 @@ class Example extends Phaser.Scene {
         enemy.health -= damage;
         this.createDamageText(enemy.x, enemy.y, damage);
         const currentTime = this.time.now;
-
-        // Update health bar if it exists
-        if (enemy.updateHealthBar) {
-            enemy.updateHealthBar();
-        }
 
         if (enemy.health <= 0) {
             // Play destroy sound when enemy is destroyed
@@ -1541,19 +1593,21 @@ class Example extends Phaser.Scene {
             if (enemy.type === 'largeSkeleton') {
                 // Spawn two little skeletons
                 this.addEnemy('smallSkeleton', enemy.x, enemy.y, this.enemyProperties.smallSkeleton);
-                this.addEnemy('smallSkeleton', enemy.x - 20, enemy.y, this.enemyProperties.smallSkeleton);
-                this.addEnemy('birdMummy', enemy.x + 20, enemy.y, this.enemyProperties.birdMummy);
-                this.addEnemy('birdMummy', enemy.x, enemy.y + 20, this.enemyProperties.birdMummy);
-                this.addEnemy('birdMummy', enemy.x, enemy.y - 20, this.enemyProperties.birdMummy);
-            }
-
-            // Destroy health bar container if it exists
-            if (enemy.healthBarContainer) {
-                enemy.healthBarContainer.destroy();
+                this.addEnemy('smallSkeleton', enemy.x - 30, enemy.y, this.enemyProperties.smallSkeleton);
+                this.addEnemy('smallSkeleton', enemy.x - 30, enemy.y - 30, this.enemyProperties.smallSkeleton);
+                this.addEnemy('smallSkeleton', enemy.x + 30, enemy.y + 30, this.enemyProperties.smallSkeleton);
+                this.addEnemy('birdMummy', enemy.x + 30, enemy.y, this.enemyProperties.birdMummy);
+                this.addEnemy('birdMummy', enemy.x, enemy.y + 30, this.enemyProperties.birdMummy);
+                this.addEnemy('birdMummy', enemy.x, enemy.y - 30, this.enemyProperties.birdMummy);
             }
 
             enemy.destroy();
             this.enemies.splice(ind, 1);
+
+            // Check if the destroyed enemy was a boss
+            if (enemy.type === 'largeBoss' || enemy.type === 'smallBoss') {
+                this.youWinScreen();
+            }
         } else {
             // Play hit sound only if enemy is not destroyed and cooldown has passed
             if (currentTime - this.lastEnemySoundTime > 100) { // 100ms = 0.1 seconds
@@ -1587,21 +1641,6 @@ class Example extends Phaser.Scene {
             }
         }
     }
-
-    //Key Words:
-    //      rate: how may to create per second
-    //      spawn_distance: how far away they spawn
-    //      spacing: spreads out the grouping of the placement
-    //      pattern=circle : spawn enemies all around the player
-    //      pattern=angle: spawn enemies in a direction from the player.
-    //          angle: the angle that points to the spawy point
-    //      pattern=angle: spawn enemies in a direction from the player.
-    //          angle: the angle that points to the spawy point
-    //      pattern=point: spawn enemies at a point on the pmap
-    //          x: the x cords
-    //          y: the y cords
-
-
 
     runTimetime() {
         // find out which time segment we are using.
@@ -1784,19 +1823,23 @@ class Example extends Phaser.Scene {
                 }
                 enemy.x += Math.cos(angle) * speed;
                 enemy.y += Math.sin(angle) * speed;
-
-                // Update health bar position if it exists
-                if (enemy.updateHealthBar) {
-                    enemy.updateHealthBar();
-                }
             }
             if (enemy.settings.type == 'witch') {
-                if (Math.random() < .005) {
-                    this.addEnemy('smallPumpkin', enemy.x, enemy.y, this.enemyProperties.smallPumpkin);
+                if (Math.random() < .02) {
+                    this.addEnemy('birdMummy', enemy.x, enemy.y, this.enemyProperties.smallPumpkin);
                 }
-                if (Math.random() < .001) {
+                if (Math.random() < .02) {
                     this.addEnemy('blackBat', enemy.x, enemy.y, this.enemyProperties.blackBat);
                 }
+            }
+
+            if(enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss'){
+                this.BossHealthBar.alpha = 1;
+                this.BossHealthBarBG.alpha = 1;
+                this.BossHealthTitle.alpha = 1;
+
+                this.BossHealthBar.width = (enemy.health / enemy.settings.health) * 500;
+
             }
         });
     }
@@ -1822,32 +1865,6 @@ class Example extends Phaser.Scene {
         enemy.isContained = true;
         this.enemies.push(enemy);
         this.worldContainer.add(enemy);
-        // Check if the enemy is a boss
-        if (enemyType === 'largeBoss' || enemyType === 'smallBoss') {
-            // Create health bar container
-            enemy.healthBarContainer = this.add.container(enemyX, enemyY - 200);
-
-            // Create background for health bar
-            const healthBarBackground = this.add.rectangle(0, 0, 200, 20, 0x000000);
-
-            // Create health bar
-            enemy.healthBar = this.add.rectangle(0, 0, 200, 20, 0xff0000);
-
-            // Add background and health bar to container
-            enemy.healthBarContainer.add(healthBarBackground);
-            enemy.healthBarContainer.add(enemy.healthBar);
-
-            // Add container to world container
-            this.worldContainer.add(enemy.healthBarContainer);
-
-            // Update health bar function
-            enemy.updateHealthBar = () => {
-                const healthPercentage = enemy.health / settings.health;
-                enemy.healthBar.width = 200 * healthPercentage;
-                enemy.healthBarContainer.x = enemy.x;
-                enemy.healthBarContainer.y = enemy.y - 200;
-            };
-        }
     }
 
 
@@ -1995,6 +2012,8 @@ class Example extends Phaser.Scene {
 
     gameOverScreen() {
         // Save the high score
+        this.gameIsDone = true;
+        this.redArrow.alpha = 0;
         this.saveHighScore(this.score);
         // Remove all enemies
         this.enemies.forEach(enemy => enemy.destroy());
@@ -2072,7 +2091,8 @@ class Example extends Phaser.Scene {
 
 
     youWinScreen() {
-
+        this.redArrow.alpha = 0;
+        this.gameIsDone = true;
         this.playWinMusic();
 
         // Save the high score
