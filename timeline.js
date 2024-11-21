@@ -32,8 +32,8 @@ this.timeline = [
     [20, "birdMummy|circle|r:0.02", "largePumpkin|circle|r:0.02", "witch|circle|r:0.005|s:200"],
     [25, "largeSkeleton|circle|r:0.01", "witch|circle|r:0.01"],
     [25, "largeSkeleton|circle|r:0.01", "witch|circle|r:0.01"],
-    [40, "birdMummy|circle|r:0.01", "smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01", "smallPumpkin|circle|r:0.03", "largePumpkin|circle|r:0.01", "greenMonster|circle|r:0.01, "witch|circle|r:0.005|s:200"],
-    [20, "birdMummy|circle|r:0.01", "smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01, "witch|circle|r:0.005|s:200"],
+    [40, "birdMummy|circle|r:0.01", "smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01", "smallPumpkin|circle|r:0.03", "largePumpkin|circle|r:0.01", "greenMonster|circle|r:0.01", "witch|circle|r:0.005|s:200"],
+    [20, "birdMummy|circle|r:0.01", "smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01", "witch|circle|r:0.005|s:200"],
     [0,"func|playRunMusic"],
     [20, "wolfEnemy|circle|r:0.03"],
     [0, "witch|circle|r:6"],
@@ -45,7 +45,7 @@ this.timeline = [
     [20, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2"],
     [0, "largeBoss|angle|r:1"],
     [20, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2"],
-    [0, "vineBig|circle|r:10",],
+    [0, "vineBig|circle|r:10"],
     [20, "vineTiny|circle|r:0.2","vineSmall|circle|r:0.2","vineBig|circle|r:0.02"],
     [0, "vineHuge|circle|r:10"],
     [20, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.05", "vineHuge|circle|r:0.02"],
@@ -56,5 +56,5 @@ this.timeline = [
     [15, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.1", "vineHuge|circle|r:0.1", "vineGiant|circle|r:0.05"],
     [15, "vineTiny|circle|r:0.3", "vineSmall|circle|r:0.3", "vineBig|circle|r:0.2", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.1"],
     [15, "vineTiny|circle|r:0.3", "vineSmall|circle|r:0.3", "vineBig|circle|r:0.3", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.2"],
-    [10000000, "vineTiny|circle|r:0.4", "vineSmall|circle|r:0.4", "vineBig|circle|r:0.4", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.2"],
+    [10000000, "vineTiny|circle|r:0.4", "vineSmall|circle|r:0.4", "vineBig|circle|r:0.4", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.2"]
 ];
