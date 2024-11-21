@@ -143,8 +143,8 @@
                 "largeSkeleton|circle|r:0.01",
             ],
             [
-                0, "largeGhost|circle|r:20",
-                "greenMonster|circle|r:20"
+                0, "largeGhost|circle|r:10",
+                "greenMonster|circle|r:10"
             ],
             [
                 20,
@@ -180,25 +180,26 @@
                 0,"func|playRunMusic"
             ],
             [
-                30, "wolfEnemy|circle|r:0.03"
+                20, "wolfEnemy|circle|r:0.03"
             ],
             [
-                20, "witch|circle|r:0.03",
+                0, "witch|circle|r:6",
+            ],
+    [
+                20, "wolfEnemy|circle|r:0.03"
             ],
             [
-                0, "greenMonster|angle|r:40|s:50"
-            ],
-            [
-                20
+                0, "greenMonster|angle|r:6|s:10"
             ],
             [
                 30, "mummy|circle|r:0.03"
             ],
             [
-                20
+                10
             ],
             [
-                0, "vineTiny|circle|r:20",
+                0, "vineTiny|circle|r:12|s:30",
+                "vineSmall|circle|r:20",
                 "func|playBossMusic"
             ],
             [
@@ -209,9 +210,10 @@
             ],
             [
                 10, "vineTiny|circle|r:0.03"
+                "vineSmall|circle|r:0.03"
             ],
             [
-                0, "vineSmall|angle|r:40|s:20"
+                0, "vineBig|circle|r:20",
             ],
             [
                 10, "vineTiny|circle|r:0.1",
@@ -222,16 +224,19 @@
                 0, "vineHuge|circle|r:20"
             ],
             [
-                10
+                10, "vineTiny|circle|r:0.1",
+                "vineSmall|circle|r:0.1",
+                "vineBig|circle|r:0.1",
+                "vineHuge|circle|r:0.1",
             ],
             [
                 0, "vineGiant|circle|r:20"
             ],
             [
-                10
+                5
             ],
             [
-                10, "vineTiny|circle|r:0.1",
+                10000, "vineTiny|circle|r:0.1",
                 "vineSmall|circle|r:0.1",
                 "vineBig|circle|r:0.1",
                 "vineHuge|circle|r:0.1",
