@@ -68,10 +68,10 @@
             witch: {
                 size: 18,
                 tall: 80,
-                health: 60,
+                health: 100,
                 damage: 30,
                 scale: 0.32,
-                speed: 0.2
+                speed: 0.5
             },
             wolfEnemy: {
                 size: 15,
