@@ -29,7 +29,7 @@ this.timeline = [
     [0, "witch|angle|r:5|s:200", "func|playEasyLevelMusic"],
     [35, "smallPumpkin|circle|r:0.02", "largePumpkin|circle|r:0.02", "largeSkeleton|circle|r:0.01", "witch|circle|r:0.005|s:200"],
     [0, "largeGhost|circle|r:10", "greenMonster|circle|r:10"],
-    [20, "birdMummy|circle|r:0.02", "largePumpkin|circle|r:0.02", "witch|circle|r:0.005|s:200],
+    [20, "birdMummy|circle|r:0.02", "largePumpkin|circle|r:0.02", "witch|circle|r:0.005|s:200"],
     [25, "largeSkeleton|circle|r:0.01", "witch|circle|r:0.01"],
     [25, "largeSkeleton|circle|r:0.01", "witch|circle|r:0.01"],
     [40, "birdMummy|circle|r:0.01", "smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01", "smallPumpkin|circle|r:0.03", "largePumpkin|circle|r:0.01", "greenMonster|circle|r:0.01, "witch|circle|r:0.005|s:200"],
