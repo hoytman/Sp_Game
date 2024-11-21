@@ -1,245 +1,60 @@
-  this.timeline = [
-            // First add 20 sp all over
-            // continue with lite sp for a bit
-            // create an attack circle of sp
-            // then continue sp for a bit.
-            // attack with a group of large pumpkins
-            // then cont with large and small p 
-            // bla
-            [
-              -1, "func|createStars"
-            ],
-            [
-              -1, "func|slideStars"
-            ],
-            [
-              -1, "func|fadeStars"
-            ],
-            [
-              -1, "func|fadeStars"
-            ],
-            [
-                0, "smallPumpkin|circle|r:20|s:150"
-            ],
-            [
-                20, "smallPumpkin|circle|r:0.02"
-            ],
-            [
-                0, "smallPumpkin|circle|r:20"
-            ],
-            [
-                15, "smallPumpkin|circle|r:0.015"
-            ],
-            [
-                0, "largePumpkin|circle|r:10|s:20"
-            ],
-            [
-                30,
-                "smallPumpkin|circle|r:0.02",
-                "largePumpkin|circle|r:0.01"
-            ],
-            // Attack with a group of bats
-            // Then add bats to the mis
-            [
-                0, "blackBat|angle|r:6|s:100"
-
-            ],
-            [
-                30,
-                "smallPumpkin|circle|r:0.02",
-                "largePumpkin|circle|r:0.02",
-                "blackBat|circle|r:0.005"
-            ],
-            // Attack with a group of birdMummy
-            // Then add birdMummy to the mis
-            [
-                0, "birdMummy|angle|r:6|s:100",
-                "func|playBoneMusic"
-            ],
-            [
-                30,
-                "smallPumpkin|circle|r:0.02",
-                "largePumpkin|circle|r:0.01",
-                "blackBat|circle|r:0.005",
-                "birdMummy|circle|r:0.02|"
-            ],
-            // Attack with a group of birdMummy and bats
-            // Then add birdMummy to the mis
-            [
-                0, "birdMummy|angle|r:6|s:100",
-                "blackBat|angle|r:6|s:100"
-
-            ],
-            [
-                20,
-                "smallPumpkin|circle|r:0.02",
-                "largePumpkin|circle|r:0.01",
-            ],
-            // No pumpkins, just skel.
-            [
-                40,
-                "birdMummy|circle|r:0.03",
-                "smallSkeleton|circle|r:0.01",
-            ],
-            // BAt Attack!
-            [
-                0, "blackBat|angle|r:6|s:100"
-
-            ],
-            [
-                0, "blackBat|angle|r:6|s:100"
-
-            ],
-            [
-                0, "blackBat|angle|r:6|s:100"
-
-            ],
-            [
-                40,
-                "birdMummy|circle|r:0.03",
-                "smallSkeleton|circle|r:0.01",
-            ],
-            // Monster!
-            [
-                0, "greenMonster|circle|r:20",
-                "func|playMadnessMusic"
-            ],
-            [
-                20,
-                "birdMummy|circle|r:0.03",
-                "smallSkeleton|circle|r:0.01",
-            ],
-            [
-                40,
-                "birdMummy|circle|r:0.03",
-                "smallSkeleton|circle|r:0.01",
-                "blackBat|circle|r:0.01|s:100"
-            ],
-            [
-                0, "largeGhost|angle|r:5|s:150"
-            ],
-            [
-                40,
-                "birdMummy|circle|r:0.01",
-                "smallSkeleton|circle|r:0.01",
-                "blackBat|circle|r:0.01",
-                "smallPumpkin|circle|r:0.02",
-                "largePumpkin|circle|r:0.01",
-            ],
-            [
-                25,
-                "smallPumpkin|circle|r:0.02",
-                "largePumpkin|circle|r:0.02",
-                "largeSkeleton|circle|r:0.01",
-            ],
-            [
-                0, "witch|angle|r:5|s:200",
-                "func|playEasyLevelMusic"
-            ],
-            [
-                35,
-                "smallPumpkin|circle|r:0.02",
-                "largePumpkin|circle|r:0.02",
-                "largeSkeleton|circle|r:0.01",
-            ],
-            [
-                0, "largeGhost|circle|r:10",
-                "greenMonster|circle|r:10"
-            ],
-            [
-                20,
-                "birdMummy|circle|r:0.02",
-                "largePumpkin|circle|r:0.02",
-            ],
-            [
-                25,
-                "largeSkeleton|circle|r:0.01",
-                "witch|circle|r:0.01",
-            ],
-            [
-              25,
-                "largeSkeleton|circle|r:0.01",
-                "witch|circle|r:0.01",
-            ],
-            [
-                40,
-                "birdMummy|circle|r:0.01",
-                "smallSkeleton|circle|r:0.01",
-                "blackBat|circle|r:0.01",
-                "smallPumpkin|circle|r:0.03",
-                "largePumpkin|circle|r:0.01",
-                "greenMonster|circle|r:0.01"
-            ],
-            [
-                20,
-                "birdMummy|circle|r:0.01",
-                "smallSkeleton|circle|r:0.01",
-                "blackBat|circle|r:0.01",
-            ],
-            [
-                0,"func|playRunMusic"
-            ],
-            [
-                20, "wolfEnemy|circle|r:0.03"
-            ],
-            [
-                0, "witch|circle|r:6",
-            ],
-            [
-                20, "wolfEnemy|circle|r:0.03"
-            ],
-            [
-                0, "greenMonster|angle|r:6|s:200"
-            ],
-            [
-                30, "mummy|circle|r:0.03"
-            ],
-            [
-                10
-            ],
-            [
-                0, "vineTiny|circle|r:12|s:30",
-                "vineSmall|circle|r:20",
-                "func|playBossMusic"
-            ],
-            [
-                20, "vineTiny|circle|r:0.03"
-            ],
-            [
-                0, "largeBoss|angle|r:1"
-            ],
-            [
-                10, "vineTiny|circle|r:0.03"
-                "vineSmall|circle|r:0.03"
-            ],
-            [
-                0, "vineBig|circle|r:20",
-            ],
-            [
-                10, "vineTiny|circle|r:0.1",
-                "vineSmall|circle|r:0.1",
-                "vineBig|circle|r:0.1",
-            ],
-            [
-                0, "vineHuge|circle|r:20"
-            ],
-            [
-                10, "vineTiny|circle|r:0.1",
-                "vineSmall|circle|r:0.1",
-                "vineBig|circle|r:0.1",
-                "vineHuge|circle|r:0.1",
-            ],
-            [
-                0, "vineGiant|circle|r:20"
-            ],
-            [
-                5
-            ],
-            [
-                10000, "vineTiny|circle|r:0.1",
-                "vineSmall|circle|r:0.1",
-                "vineBig|circle|r:0.1",
-                "vineHuge|circle|r:0.1",
-                "vineGiant|circle|r:0.1"
-            ]
-        ];
+this.timeline = [
+    [-1, "func|createStars"],
+    [-1, "func|slideStars"],
+    [-1, "func|fadeStars"],
+    [-1, "func|fadeStars"],
+    [0, "smallPumpkin|circle|r:20|s:150"],
+    [20, "smallPumpkin|circle|r:0.02"],
+    [0, "smallPumpkin|circle|r:20"],
+    [15, "smallPumpkin|circle|r:0.015"],
+    [0, "largePumpkin|circle|r:10|s:20"],
+    [30, "smallPumpkin|circle|r:0.02", "largePumpkin|circle|r:0.01"],
+    [0, "blackBat|angle|r:6|s:100"],
+    [30, "smallPumpkin|circle|r:0.02", "largePumpkin|circle|r:0.02", "blackBat|circle|r:0.005"],
+    [0, "birdMummy|angle|r:6|s:100", "func|playBoneMusic"],
+    [30, "smallPumpkin|circle|r:0.02", "largePumpkin|circle|r:0.01", "blackBat|circle|r:0.005", "birdMummy|circle|r:0.02|"],
+    [0, "birdMummy|angle|r:6|s:100", "blackBat|angle|r:6|s:100"],
+    [20, "smallPumpkin|circle|r:0.02", "largePumpkin|circle|r:0.01"],
+    [40, "birdMummy|circle|r:0.03", "smallSkeleton|circle|r:0.01"],
+    [0, "blackBat|angle|r:6|s:100"],
+    [0, "blackBat|angle|r:6|s:100"],
+    [0, "blackBat|angle|r:6|s:100"],
+    [40, "birdMummy|circle|r:0.03", "smallSkeleton|circle|r:0.01"],
+    [0, "greenMonster|circle|r:20", "func|playMadnessMusic"],
+    [20, "birdMummy|circle|r:0.03", "smallSkeleton|circle|r:0.01"],
+    [40, "birdMummy|circle|r:0.03","smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01|s:100"],
+    [0, "largeGhost|angle|r:5|s:150"],
+    [40, "birdMummy|circle|r:0.01", "smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01", "smallPumpkin|circle|r:0.02", "largePumpkin|circle|r:0.01"],
+    [25, "smallPumpkin|circle|r:0.02", "largePumpkin|circle|r:0.02", "largeSkeleton|circle|r:0.01"],
+    [0, "witch|angle|r:5|s:200", "func|playEasyLevelMusic"],
+    [35, "smallPumpkin|circle|r:0.02", "largePumpkin|circle|r:0.02", "largeSkeleton|circle|r:0.01"],
+    [0, "largeGhost|circle|r:10", "greenMonster|circle|r:10"],
+    [20, "birdMummy|circle|r:0.02", "largePumpkin|circle|r:0.02"],
+    [25, "largeSkeleton|circle|r:0.01", "witch|circle|r:0.01"],
+    [25, "largeSkeleton|circle|r:0.01", "witch|circle|r:0.01"],
+    [40, "birdMummy|circle|r:0.01", "smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01", "smallPumpkin|circle|r:0.03", "largePumpkin|circle|r:0.01", "greenMonster|circle|r:0.01"],
+    [20, "birdMummy|circle|r:0.01", "smallSkeleton|circle|r:0.01", "blackBat|circle|r:0.01"],
+    [0,"func|playRunMusic"],
+    [20, "wolfEnemy|circle|r:0.03"],
+    [0, "witch|circle|r:6"],
+    [20, "wolfEnemy|circle|r:0.03"],
+    [0, "greenMonster|angle|r:6|s:200"],
+    [30, "mummy|circle|r:0.03"],
+    [10],
+    [0, "vineTiny|circle|r:12|s:30", "vineSmall|circle|r:20", "func|playBossMusic"],
+    [20, "vineTiny|circle|r:0.03"],
+    [0, "largeBoss|angle|r:1"],
+    [10, "vineTiny|circle|r:0.03", "vineSmall|circle|r:0.03"],
+    [0, "vineBig|circle|r:20",],
+    [10, "vineTiny|circle|r:0.1","vineSmall|circle|r:0.1","vineBig|circle|r:0.1"],
+    [0, "vineHuge|circle|r:20"],
+    [10, "vineTiny|circle|r:0.1", "vineSmall|circle|r:0.1", "vineBig|circle|r:0.1", "vineHuge|circle|r:0.1"],
+    [0, "vineGiant|circle|r:20"],
+    [5],
+    [15, "vineTiny|circle|r:0.1", "vineSmall|circle|r:0.1", "vineBig|circle|r:0.1", "vineHuge|circle|r:0.1", "vineGiant|circle|r:0.1"],
+    [15, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.2", "vineHuge|circle|r:0.1", "vineGiant|circle|r:0.1"],
+    [15, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.2", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.1"],
+    [15, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.2", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.2"],
+    [15, "vineTiny|circle|r:0.3", "vineSmall|circle|r:0.3", "vineBig|circle|r:0.3", "vineHuge|circle|r:0.3", "vineGiant|circle|r:0.3"],
+    [10000000, "vineTiny|circle|r:0.4", "vineSmall|circle|r:0.4", "vineBig|circle|r:0.4", "vineHuge|circle|r:0.4", "vineGiant|circle|r:0.4"],
+];
