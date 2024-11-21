@@ -92,7 +92,7 @@
             smallBoss: {
                 size: 50,
                 tall: 90,
-                health: 80,
+                health: 2000,
                 damage: 80,
                 scale: 0.45,
                 speed: 0.1
@@ -100,7 +100,7 @@
             largeBoss: {
                 size: 60,
                 tall: 100,
-                health: 2000,
+                health: 5000,
                 damage: 120,
                 scale: 0.6,
                 speed: 0.1
