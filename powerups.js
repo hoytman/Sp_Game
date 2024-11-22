@@ -149,7 +149,7 @@
             'jb_title': {
                 title: "Jelly Beans",
                 text: "A low power front firing weapon with some scatter.",
-                text2: "This is the weapon you start with.  1 Damage",
+                text2: "This is the weapon you start with.",
                 page: 3
             },
             'jb_rate': {
@@ -163,7 +163,7 @@
                 }
             },
             'jb_damage': {
-                text: "Increase jelly bean damage to 2",
+                text: "2x jelly bean damage",
                 price: 75,
                 active: false,
                 page: 3,
@@ -174,7 +174,7 @@
                 }
             },
             'jb_damage2': {
-                text: "Increase jelly bean damage to 4",
+                text: "4x jelly bean damage!",
                 price: 800,
                 active: false,
                 page: 3,
@@ -226,7 +226,7 @@
                 requires: 'cc_active'
             },
             'cc_damage': {
-                text: "Increase candy corn damage to 2",
+                text: "2x candy corn damage",
                 price: 100,
                 active: false,
                 page: 4,
@@ -237,7 +237,7 @@
                 requires: 'cc_active'
             },
             'cc_damage2': {
-                text: "Increase candy corn damage to 4",
+                text: "4x candy corn damage",
                 price: 1200,
                 active: false,
                 page: 4,
@@ -248,7 +248,7 @@
                 requires: 'cc_damage'
             },
             'cc_double': {
-                text: "Fire 2 More candy corn each time",
+                text: "Fire 2 additional candy corns",
                 price: 200,
                 active: false,
                 page: 4,
@@ -290,14 +290,14 @@
                 requires: 'weaponSlots'
             },
             'chocolateShield_increase': {
-                text: "Add 2 more",
+                text: "Add 2 more chocolates",
                 price: 200,
                 active: false,
                 page: 5,
                 requires: 'chocolateShield_active'
             },
             'chocolateShield_dam': {
-                text: "Chocolate does more double damage",
+                text: "2x Chocolate damage",
                 price: 200,
                 active: false,
                 page: 5,
@@ -307,8 +307,8 @@
                 },
                 requires: 'chocolateShield_active'
             },
-           'chocolateShield_dam': {
-                text: "Chocolate does more quad damage",
+           'chocolateShield_dam2': {
+                text: "4x Chocolate damage",
                 price: 1000,
                 active: false,
                 page: 5,
@@ -376,7 +376,7 @@
                 requires: 'cotton_active'
             },
             'cotton_damage': {
-                text: "Double Cotton Candy damage",
+                text: "2x Cotton Candy damage",
                 price: 100,
                 active: false,
                 page: 9,
@@ -387,7 +387,7 @@
                 requires: 'cotton_active'
             },
            'cotton_damage2': {
-                text: "Quad Cotton Candy damage",
+                text: "4x Cotton Candy damage",
                 price: 800,
                 active: false,
                 page: 9,
@@ -455,24 +455,26 @@
                 requires: 'candybag_rate'
             },
             'candybag_range': {
-                text: "Fire Candy Bag farther",
-                price: 100,
-                active: false,
-                page: 10,
-                target: 'candyBag',
-                updates: {
-                    range: 2400,
-                },
-                requires: 'candybag_active'
-            },
-            'candybag_range': {
-                text: "Fire Candy Bag much farther",
+                text: "Candy Bag lasts longer",
                 price: 200,
                 active: false,
                 page: 10,
                 target: 'candyBag',
                 updates: {
-                    range: 3200,
+                    range: 2400,
+                    speed: 1.8
+                },
+                requires: 'candybag_active'
+            },
+            'candybag_range': {
+                text: "Candy Bag lasts a lot longer",
+                price: 400,
+                active: false,
+                page: 10,
+                target: 'candyBag',
+                updates: {
+                    range: 3600,
+                    speed: 1.5
                 },
                 requires: 'candybag_active'
             },
@@ -502,7 +504,7 @@
                 requires: 'icecream_active'
             },
             'icecream_damage': {
-                text: "Increase Ice Cream damage",
+                text: "2x Ice Cream damage",
                 price: 100,
                 active: false,
                 page: 11,
@@ -524,7 +526,7 @@
                 requires: 'icecream_active'
             },
             'icecream_generationMax': {
-                text: "Ice cream gains another generation",
+                text: "Ice cream gains another generation (4)",
                 price: 600,
                 active: false,
                 page: 11,
@@ -536,7 +538,7 @@
 
             },
             'icecream_generationMax': {
-                text: "Ice cream gains another generation again",
+                text: "Ice cream gains another generation (5)",
                 price: 2000,
                 active: false,
                 page: 11,
@@ -594,7 +596,7 @@
                 requires: 'lollipop_life2'
             },
             'lollipop_damage': {
-                text: "Double Lollipop damage",
+                text: "2x Lollipop damage",
                 price: 100,
                 active: false,
                 page: 7,
@@ -629,7 +631,7 @@
                 },
                 requires: 'peppermint_active'
             },
-            'peppermint_rate': {
+            'peppermint_rate2': {
                 text: "Increase Peppermint fire rate a lot",
                 price: 1000,
                 active: false,
@@ -638,10 +640,10 @@
                 updates: {
                     fire_rate: 150
                 },
-                requires: 'peppermint_active'
+                requires: 'peppermint_rate'
             },
             'peppermint_damage': {
-                text: "Increase Peppermint damage",
+                text: "2x Peppermint damage",
                 price: 100,
                 active: false,
                 page: 8,
@@ -653,7 +655,7 @@
             },
             'peppermint_life': {
                 text: "Increase Peppermint flight time",
-                price: 100,
+                price: 500,
                 active: false,
                 page: 8,
                 target: 'peppermint',
