@@ -77,7 +77,7 @@
                 size: 15,
                 tall: 70,
                 health: 50,
-                damage: 50,
+                damage: 40,
                 scale: 0.25,
                 speed: 3.5
             },
@@ -85,7 +85,7 @@
                 size: 40,
                 tall: 80,
                 health: 100,
-                damage: 80,
+                damage: 60,
                 scale: 0.30,
                 speed: 4
             },
@@ -119,7 +119,7 @@
                 health: 6,
                 damage: 16,
                 scale: 0.4,
-                speed: 1.5
+                speed: 1
             },
             vineBig: {
                 size: 18,
@@ -135,7 +135,7 @@
                 health: 30,
                 damage: 50,
                 scale: 0.8,
-                speed: 1.8
+                speed: 2
             },
             vineGiant: {
                 size: 35,
@@ -143,6 +143,6 @@
                 health: 50,
                 damage: 80,
                 scale: 1,
-                speed: 0.8
+                speed: 0.3
             }
         };
