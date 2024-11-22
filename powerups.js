@@ -297,7 +297,7 @@
                 requires: 'chocolateShield_active'
             },
             'chocolateShield_dam': {
-                text: "Chocolate does more double dammage",
+                text: "Chocolate does more double damage",
                 price: 200,
                 active: false,
                 page: 5,
@@ -308,7 +308,7 @@
                 requires: 'chocolateShield_active'
             },
            'chocolateShield_dam': {
-                text: "Chocolate does more quad dammage",
+                text: "Chocolate does more quad damage",
                 price: 1000,
                 active: false,
                 page: 5,
