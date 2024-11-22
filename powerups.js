@@ -330,7 +330,7 @@
                 requires: 'chocolateShield_active'
             },
             'chocolateShield_speed': {
-                text: "Increase moves faster",
+                text: "Chocolate moves faster",
                 price: 100,
                 active: false,
                 page: 5,
@@ -341,7 +341,7 @@
                 requires: 'chocolateShield_active'
             },
             'chocolateShield_speed2': {
-                text: "Increase moves much faster",
+                text: "Chocolate moves much faster",
                 price: 200,
                 active: false,
                 page: 5,
@@ -708,7 +708,7 @@
                 page: 6
             },
             'bonbon_active': {
-                text: "Buy the BonBon Weapon",
+                text: "Buy the BonBon Weapon (damage 2)",
                 price: 200,
                 active: false,
                 page: 6,
@@ -728,7 +728,7 @@
                 requires: 'bonbon_active'
             },
             'bonbon_damage2': {
-                text: "Increase BonBon damage more to 10",
+                text: "Increase BonBon damage to 10",
                 price: 200,
                 active: false,
                 page: 6,
