@@ -100,7 +100,7 @@
             largeBoss: {
                 size: 60,
                 tall: 100,
-                health: 5000,
+                health: 3500,
                 damage: 120,
                 scale: 0.6,
                 speed: 0.1
