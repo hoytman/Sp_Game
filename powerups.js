@@ -768,7 +768,7 @@
             },
             'bonbon_damage5': {
                 text: "Increase BonBon damage to 45",
-                price: 800,
+                price: 1000,
                 active: false,
                 page: 6,
                 target: 'bonbon',
