@@ -124,7 +124,7 @@
             },
             'weaponSlot6': {
                 text: "Increase weapon slots from 5 to 6",
-                price: 5000,
+                price: 4000,
                 active: false,
                 page: 2,
                 target: 'this',
@@ -135,7 +135,7 @@
             },
             'weaponSlot7': {
                 text: "Increase weapon slots from 6 to 7",
-                price: 5000,
+                price: 8000,
                 active: false,
                 page: 2,
                 target: 'this',
@@ -149,11 +149,11 @@
             'jb_title': {
                 title: "Jelly Beans",
                 text: "A low power front firing weapon with some scatter.",
-                text2: "Great for weak enemies!",
+                text2: "This is the weapon you start with.  1 Damage",
                 page: 3
             },
             'jb_rate': {
-                text: "Increase jelly bean fire rate",
+                text: "Double jelly bean fire rate",
                 price: 50,
                 active: false,
                 page: 3,
@@ -163,7 +163,7 @@
                 }
             },
             'jb_damage': {
-                text: "Increase jelly bean damage",
+                text: "Increase jelly bean damage to 2",
                 price: 75,
                 active: false,
                 page: 3,
@@ -171,6 +171,18 @@
                 updates: {
                     power: 2,
                     size: 5
+                }
+            },
+            'jb_damage2': {
+                text: "Increase jelly bean damage to 4",
+                price: 800,
+                active: false,
+                page: 3,
+                target: 'jellyBeans',
+                requires: 'jb_damage',
+                updates: {
+                    power: 4,
+                    size: 7
                 }
             },
             'jb_double': {
@@ -191,7 +203,7 @@
             },
             'candyCorn_title': {
                 title: "Candy Corn",
-                text: "Fires a spread of candy.",
+                text: "Fires a spread of candy.  Damage 1",
                 text2: "Great against quick enemies.",
                 page: 4
             },
@@ -209,12 +221,12 @@
                 page: 4,
                 target: 'candyCorn',
                 updates: {
-                    fire_rate: 180
+                    fire_rate: 200
                 },
                 requires: 'cc_active'
             },
             'cc_damage': {
-                text: "Increase candy corn damage",
+                text: "Increase candy corn damage to 2",
                 price: 100,
                 active: false,
                 page: 4,
@@ -224,8 +236,19 @@
                 },
                 requires: 'cc_active'
             },
+            'cc_damage': {
+                text: "Increase candy corn damage to 4",
+                price: 1200,
+                active: false,
+                page: 4,
+                target: 'candyCorn',
+                updates: {
+                    power: 2,
+                },
+                requires: 'cc_damage'
+            },
             'cc_double': {
-                text: "Fire More candy corn each time",
+                text: "Fire 2 More candy corn each time",
                 price: 200,
                 active: false,
                 page: 4,
@@ -274,7 +297,7 @@
                 requires: 'chocolateShield_active'
             },
             'chocolateShield_dam': {
-                text: "Chocolate does more dammage",
+                text: "Chocolate does more double dammage",
                 price: 200,
                 active: false,
                 page: 5,
@@ -283,6 +306,17 @@
                     damage: 2
                 },
                 requires: 'chocolateShield_active'
+            },
+           'chocolateShield_dam': {
+                text: "Chocolate does more quad dammage",
+                price: 1000,
+                active: false,
+                page: 5,
+                target: 'chocolateShield',
+                updates: {
+                    damage: 4
+                },
+                requires: 'chocolateShield_dam'
             },
             'chocolateShield_wider': {
                 text: "Increase chocolate shield width",
@@ -319,7 +353,7 @@
             },
             'cottonCandy_title': {
                 title: "Cotton Candy",
-                text: "Fires a large candy that slightly damages many foes.",
+                text: "Fires a large persistant candy that damages many foes.",
                 text2: "Great against large groups of weak enemies.",
                 page: 9
             },
@@ -342,7 +376,7 @@
                 requires: 'cotton_active'
             },
             'cotton_damage': {
-                text: "Increase Cotton Candy damage",
+                text: "Double Cotton Candy damage",
                 price: 100,
                 active: false,
                 page: 9,
@@ -351,6 +385,17 @@
                     power: 2,
                 },
                 requires: 'cotton_active'
+            },
+           'cotton_damage': {
+                text: "Quad Cotton Candy damage",
+                price: 800,
+                active: false,
+                page: 9,
+                target: 'cottonCandy',
+                updates: {
+                    power: 4,
+                },
+                requires: 'cotton_damage'
             },
             'cotton_range': {
                 text: "Fire Cotton Candy farther",
@@ -398,6 +443,17 @@
                 },
                 requires: 'candybag_active'
             },
+           'candybag_rate': {
+                text: "Increase Candy Bag fire rate a lot",
+                price: 1000,
+                active: false,
+                page: 10,
+                target: 'candyBag',
+                updates: {
+                    candyRate: 2
+                },
+                requires: 'candybag_rate'
+            },
             'candybag_range': {
                 text: "Fire Candy Bag farther",
                 price: 100,
@@ -411,17 +467,6 @@
             },
             'candybag_range': {
                 text: "Fire Candy Bag much farther",
-                price: 200,
-                active: false,
-                page: 10,
-                target: 'candyBag',
-                updates: {
-                    range: 3200,
-                },
-                requires: 'candybag_active'
-            },
-            'candybag_more': {
-                text: "Candy Bag makes more candy",
                 price: 200,
                 active: false,
                 page: 10,
@@ -480,12 +525,24 @@
             },
             'icecream_generationMax': {
                 text: "Ice cream gains another generation",
-                price: 200,
+                price: 600,
                 active: false,
                 page: 11,
                 target: 'iceCream',
                 updates: {
                     generationMax: 4,
+                },
+                requires: 'icecream_active'
+
+            },
+            'icecream_generationMax': {
+                text: "Ice cream gains another generation again",
+                price: 2000,
+                active: false,
+                page: 11,
+                target: 'iceCream',
+                updates: {
+                    generationMax: 5,
                 },
                 requires: 'icecream_active'
 
@@ -510,7 +567,7 @@
                 page: 7,
                 target: 'lollipop',
                 updates: {
-                    range: 1400
+                    range: 1000
                 },
                 requires: 'lollipop_active'
             },
@@ -521,13 +578,13 @@
                 page: 7,
                 target: 'lollipop',
                 updates: {
-                    range: 2000
+                    range: 1500
                 },
                 requires: 'lollipop_life'
             },
             'lollipop_life3': {
                 text: "Lollipops last for a lot longer",
-                price: 300,
+                price: 800,
                 active: false,
                 page: 7,
                 target: 'lollipop',
@@ -537,7 +594,7 @@
                 requires: 'lollipop_life2'
             },
             'lollipop_damage': {
-                text: "Increase Lollipop damage",
+                text: "Double Lollipop damage",
                 price: 100,
                 active: false,
                 page: 7,
@@ -569,6 +626,17 @@
                 target: 'peppermint',
                 updates: {
                     fire_rate: 300
+                },
+                requires: 'peppermint_active'
+            },
+            'peppermint_rate': {
+                text: "Increase Peppermint fire rate a lot",
+                price: 1000,
+                active: false,
+                page: 8,
+                target: 'peppermint',
+                updates: {
+                    fire_rate: 150
                 },
                 requires: 'peppermint_active'
             },
@@ -633,7 +701,7 @@
             */
             'bonbon_title': {
                 title: "BonBon",
-                text: "Low fire rate but high damage.",
+                text: "Low fire rate but high damage.  ",
                 text2: "Penetrates any enemie that it overcomes.",
                 page: 6
             },
@@ -645,7 +713,7 @@
                 requires: 'weaponSlots'
             },
             'bonbon_damage': {
-                text: "Increase BonBon damage",
+                text: "Increase BonBon damage to 5",
                 price: 100,
                 active: false,
                 page: 6,
@@ -658,7 +726,7 @@
                 requires: 'bonbon_active'
             },
             'bonbon_damage2': {
-                text: "Increase BonBon damage more",
+                text: "Increase BonBon damage more to 10",
                 price: 200,
                 active: false,
                 page: 6,
@@ -671,30 +739,43 @@
                 requires: 'bonbon_damage'
             },
             'bonbon_damage3': {
-                text: "Increase BonBon damage a lot",
+                text: "Increase BonBon damage to 20",
                 price: 400,
                 active: false,
                 page: 6,
                 target: 'bonbon',
                 updates: {
-                    power: 15,
+                    power: 20,
                     scale: .16,
                     size: 16
                 },
                 requires: 'bonbon_damage2'
             },
             'bonbon_damage4': {
-                text: "Increase BonBon damage like crazy",
+                text: "Increase BonBon damage to 30",
                 price: 800,
                 active: false,
                 page: 6,
                 target: 'bonbon',
                 updates: {
-                    power: 20,
+                    power: 30,
                     scale: .18,
                     size: 18
                 },
                 requires: 'bonbon_damage3'
+            },
+                'bonbon_damage4': {
+                text: "Increase BonBon damage to 45",
+                price: 800,
+                active: false,
+                page: 6,
+                target: 'bonbon',
+                updates: {
+                    power: 45,
+                    scale: .2,
+                    size: 20
+                },
+                requires: 'bonbon_damage4'
             },
 
             'cupCake_title': {
@@ -745,7 +826,7 @@
             },
             'cupCake_double': {
                 text: "Fire More cup cakes each time",
-                price: 500,
+                price: 1000,
                 active: false,
                 page: 12,
                 requires: 'cupCake_active'
