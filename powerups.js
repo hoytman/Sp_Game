@@ -174,7 +174,7 @@
                 }
             },
             'jb_damage2': {
-                text: "4x jelly bean damage!",
+                text: "4x jelly bean damage",
                 price: 800,
                 active: false,
                 page: 3,
