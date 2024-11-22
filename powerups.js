@@ -386,7 +386,7 @@
                 },
                 requires: 'cotton_active'
             },
-           'cotton_damage': {
+           'cotton_damage2': {
                 text: "Quad Cotton Candy damage",
                 price: 800,
                 active: false,
