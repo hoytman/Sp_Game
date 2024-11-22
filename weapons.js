@@ -26,7 +26,7 @@ this.weapons = {
             lollipop: {
                 fire_rate: 180, // 1/8 of a second in ms
                 power: 1,
-                range: 800,
+                range: 600,
                 speed: 5,
                 size: 3,
                 spread: 30,
