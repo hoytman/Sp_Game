@@ -443,7 +443,7 @@
                 },
                 requires: 'candybag_active'
             },
-           'candybag_rate': {
+           'candybag_rate2': {
                 text: "Increase Candy Bag fire rate a lot",
                 price: 1000,
                 active: false,
@@ -466,7 +466,7 @@
                 },
                 requires: 'candybag_active'
             },
-            'candybag_range': {
+            'candybag_range2': {
                 text: "Candy Bag lasts a lot longer",
                 price: 400,
                 active: false,
@@ -476,7 +476,7 @@
                     range: 3600,
                     speed: 1.5
                 },
-                requires: 'candybag_active'
+                requires: 'candybag_range'
             },
 
             'iceCream_title': {
@@ -537,7 +537,7 @@
                 requires: 'icecream_active'
 
             },
-            'icecream_generationMax': {
+            'icecream_generationMax2': {
                 text: "Ice cream gains another generation (5)",
                 price: 2000,
                 active: false,
@@ -546,7 +546,7 @@
                 updates: {
                     generationMax: 5,
                 },
-                requires: 'icecream_active'
+                requires: 'icecream_generationMax'
 
             },
             'lollipop_title': {
