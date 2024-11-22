@@ -813,7 +813,7 @@
                 updates: {
                     fire_rate: 300
                 },
-                requires: 'cupCake_active'
+                requires: 'cupCake_rate'
             },
             'cupCake_damage': {
                 text: "Increase cup cake damage",
@@ -827,7 +827,7 @@
                 requires: 'cupCake_active'
             },
             'cupCake_double': {
-                text: "Fire More cup cakes each time",
+                text: "Fire twice as many per attack",
                 price: 1000,
                 active: false,
                 page: 12,
