@@ -236,7 +236,7 @@
                 },
                 requires: 'cc_active'
             },
-            'cc_damage': {
+            'cc_damage2': {
                 text: "Increase candy corn damage to 4",
                 price: 1200,
                 active: false,
