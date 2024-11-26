@@ -1,5 +1,5 @@
 this.timeline = [
-    [-1, "func|createStars"],
+    [-1, "func|createStartMenu"],
     [-1, "func|slideStars"],
     [0, "func|addDialogOne"],
     [4],
