@@ -1,7 +1,8 @@
 this.timeline = [
     [-1, "func|createStars"],
     [-1, "func|slideStars"],
-    [-1, "func|fadeStars"],
+    [0, "func|addDialogOne"],
+    [10],
     [-1, "func|fadeStars"],
     [0, "smallPumpkin|circle|r:20|s:150"],
     [20, "smallPumpkin|circle|r:0.02"],
