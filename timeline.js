@@ -62,7 +62,7 @@ this.timeline = [
     [999999999, "vineTiny|circle|r:0.1", "vineSmall|circle|r:0.1", "vineBig|circle|r:0.06", "vineHuge|circle|r:0.03", "vineGiant|circle|r:0.02", "name|phase5"],
     [999999999, "vineTiny|circle|r:0.1", "vineSmall|circle|r:0.1", "vineBig|circle|r:0.08", "vineHuge|circle|r:0.05", "vineGiant|circle|r:0.05", "name|phase6"],
     [999999999, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.1", "vineHuge|circle|r:0.08", "vineGiant|circle|r:0.08", "name|phase7"],
-    [999999999, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.1", "vineHuge|circle|r:0.1", "vineGiant|circle|r:0.1", "name|phase8"],
+    [60, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.1", "vineHuge|circle|r:0.1", "vineGiant|circle|r:0.1", "name|phase8"],
     [9999999999, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.2", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.2", , "name|phase9"],
     [0, "func|endBossBattle"],
     [0, "func|bossDies"],
