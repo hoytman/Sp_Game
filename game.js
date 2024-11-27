@@ -1,7 +1,7 @@
 class Example extends Phaser.Scene {
     constructor() {
         super();
-        this.cheatActive = true
+        this.cheatActive = false;
         this.score = 0;
         this.timeline = []; // Initialize timeline as an empty array
         this.funcOverride = '';
@@ -14,7 +14,7 @@ class Example extends Phaser.Scene {
         this.leafSize = 20;
         this.collectedLeaves = 100; // Variable to track collected leaves
         this.lastFired = 0;
-        this.paused = false;
+        this.pausedForShop = false;
         this.MAX_WORLD_BOUND = 5000; // New constant for maximum world-bound distance
         this.ENEMY_SPAWN_DISTANCE = 400; // New constant for enemy spawn distance
         this.ENEMY_REMOVAL_DISTANCE = 1500; // New constant for enemy removal distance
@@ -40,15 +40,23 @@ class Example extends Phaser.Scene {
         this.enemies = []; // Array to store enemy objects
         this.lastEnemyDirectionChangeTime = 0;
         this.gameTimer = 0; // New game timer
+        this.stepTime = 0;
+        this.lastStepTime = 0;
+        this.actualTime = 0;
+        this.runTime = 0;
+        this.inStep = false;
+        this.stepCount = 0;
         this.shopPage = 1;
         this.shopMaxPage = 12;
         this.dots = [];
-        this.completedSegment = -1;
+        this.currentSegment = -1;
         this.weaponSlots = 1;
         this.filledWeaponSlots = 1;
         this.objectDepthSort = [];
         this.objectDepthSortStep = 0;
         this.gameIsDone = false;
+        this.pointerActive = true;
+        this.completed = [];
         // Timeline
 
         //Key Words:
@@ -80,7 +88,7 @@ class Example extends Phaser.Scene {
             cakes: [],
             bonbons: [],
             cupCakes: [],
-            chocolateShields: []
+            chocolateShields: [],
         }
 
         // Global object for background objects
@@ -169,6 +177,9 @@ class Example extends Phaser.Scene {
         this.load.image('vineBig', 'https://play.rosebud.ai/assets/vine_big.png?V2r3');
         this.load.image('vineHuge', 'https://play.rosebud.ai/assets/vine_huge.png?arvB');
         this.load.image('vineGiant', 'https://play.rosebud.ai/assets/vine_giant.png?WdKe');
+        this.load.image('sarahFace', 'https://play.rosebud.ai/assets/sarahFace.png?cP3s');
+        this.load.image('chuckFace', 'https://play.rosebud.ai/assets/chuckFace.png?OLrB');
+
         this.load.audio('menuMusic', 'https://play.rosebud.ai/assets/menu.mp3?mFp6');
         this.load.audio('enemyHitSound', 'https://play.rosebud.ai/assets/low_pop.mp3?kLLn');
         this.load.audio('enemyDestroySound', 'https://play.rosebud.ai/assets/lowest pop.mp3?NKVU');
@@ -184,14 +195,20 @@ class Example extends Phaser.Scene {
         this.load.on('complete', this.onPrologueMusicLoaded, this);
     }
     onPrologueMusicLoaded() {
-        console.log('All assets loaded, including prologue music and other music tracks.');
         this.musicLoaded = true;
     }
 
     create() {
-        if(this.cheatActive){
-             this.collectedLeaves = 9999999;
+        if (this.cheatActive) {
+            this.collectedLeaves = 9999999;
         }
+        // Set up the 15ms update function
+        this.time.addEvent({
+            delay: 15,
+            callback: this.update15ms,
+            callbackScope: this,
+            loop: true
+        });
         // Add key listener for 'q'
         this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
         // Create the red diamond
@@ -204,9 +221,23 @@ class Example extends Phaser.Scene {
         this.redArrow.closePath();
         this.redArrow.fillPath();
         this.redArrow.setDepth(10000);
+
+        // Create a blue circle
+        this.bossIndicator = this.add.graphics();
+        this.bossIndicator.fillStyle(0xff00ff, 1);
+        this.bossIndicator.beginPath();
+        this.bossIndicator.moveTo(10, 0);
+        this.bossIndicator.lineTo(0, 10);
+        this.bossIndicator.lineTo(-10, 0);
+        this.bossIndicator.lineTo(0, -10);
+        this.bossIndicator.closePath();
+        this.bossIndicator.fillPath();
+        this.bossIndicator.alpha = 0;
+        this.bossIndicator.setDepth(10001); // Ensure it's drawn on top
+
         // Add event listener for window blur
         window.addEventListener('blur', () => {
-            if (this.playingGame && !this.paused) {
+            if (this.playingGame && !this.pausedForShop) {
                 this.openShop();
             }
         });
@@ -294,8 +325,7 @@ class Example extends Phaser.Scene {
             this.mouseX = pointer.worldX;
             this.mouseY = pointer.worldY;
         });
-        // Initialize game timer
-        this.gameTimer = 0;
+
         // Add spacebar for shop toggle
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         // Set world bounds
@@ -341,7 +371,7 @@ class Example extends Phaser.Scene {
         this.BossHealthBar.setOrigin(1, 0.5);
         this.BossHealthBar.setScrollFactor(0);
         this.BossHealthBar.setDepth(100);
-        
+
 
         // Create health bar background
         this.BossHealthBarBG = this.add.rectangle(775, 52, 500, 20, 0xff0000);
@@ -383,15 +413,21 @@ class Example extends Phaser.Scene {
     }
 
     toggleShop() {
-        if (this.paused) {
+        if (this.pausedForShop) {
             this.closeShop();
         } else {
             this.openShop();
         }
     }
+
     openShop() {
-        if (this.paused) return; // Prevent opening if already open
-        this.paused = true;
+        if (this.cheatActive) {
+            Object.entries(this.powerups).forEach(([key, powerupItem]) => {
+                this.upgradePowerup(key);
+            });
+        }
+        if (this.pausedForShop) return; // Prevent opening if already open
+        this.pausedForShop = true;
         this.shopOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
         this.shopOverlay.setScrollFactor(0);
         this.shopOverlay.setDepth(50);
@@ -583,8 +619,8 @@ class Example extends Phaser.Scene {
         return button;
     }
     closeShop() {
-        if (!this.paused) return; // Prevent closing if already closed
-        this.paused = false;
+        if (!this.pausedForShop) return; // Prevent closing if already closed
+        this.pausedForShop = false;
         this.shopOverlay.destroy();
         this.shopTitle.destroy();
         Object.values(this.powerups).forEach(powerupItem => {
@@ -687,7 +723,9 @@ class Example extends Phaser.Scene {
 
             }
         }
-        this.resetShop();
+        if (!this.cheatActive) {
+            this.resetShop();
+        }
     }
 
     // Note: for player/emeny collisions, don't use height.
@@ -752,93 +790,152 @@ class Example extends Phaser.Scene {
         }
         return false;
     }
+
+    runOverrideFunctions() {
+
+        switch (this.funcOverride) {
+            case 'createStartMenu':
+                this.createStartMenu();
+                break;
+            case 'slideStars':
+                this.slideStars();
+                break;
+            case 'addDialogOne':
+                this.addDialogOne();
+                break;
+            case 'addDialogTwo':
+                this.addDialogTwo();
+                break;
+            case 'addDialogThree':
+                this.addDialogThree();
+                break;
+            case 'addDialogFour':
+                this.addDialogFour();
+                break;
+            case 'fadeStars':
+                this.fadeStars();
+                break;
+            case 'endBossBattle':
+                this.endBossBattle();
+            break;
+            case 'bossDies':
+                this.bossDies();
+            break;
+            case 'addWinDialogOne':
+                this.addWinDialogOne();
+            break;
+            case 'addWinDialogTwo':
+                this.addWinDialogTwo();
+            break;
+            case 'addWinDialogThree':
+                this.addWinDialogThree();
+            break;
+            case 'addWinDialogFour':
+                this.addWinDialogFour();
+            break;
+            case 'youWinScreen':
+                this.youWinScreen();
+            break;
+            case 'playBoneMusic':
+                this.playBoneMusic();
+                break;
+            case 'playMadnessMusic':
+                this.playMadnessMusic();
+                break;
+            case 'playWinMusic':
+                this.playWinMusic();
+                break;
+            case 'playRunMusic':
+                this.playRunMusic();
+                break;
+            case 'playEasyLevelMusic':
+                this.playEasyLevelMusic();
+                break;
+            case 'playBossMusic':
+                this.playBossMusic();
+                break;
+        }
+    }
+
     update(time, delta) {
-        if(this.gameIsDone == true){
-            return;
-        }
+        // Use update15ms to enforce browser uniformity.
+    }
 
-        // Update cinematic scene if it's active
-        // Check for 'q' key press to increase gameTimer
+    update15ms() {
+        // Don't start untill the music is ready
         if (!this.musicLoaded) {
+            this.inStep = false;
             return;
         }
-        // Update red diamond position to follow the mouse
-        this.redArrow.x = this.input.mousePointer.x;
-        this.redArrow.y = this.input.mousePointer.y;
-
-        if (this.cheatActive && Phaser.Input.Keyboard.JustDown(this.qKey)) {
-            this.gameTimer += 10000;
+        // DOnt start a step if another is still active.
+        if (this.inStep) {
+            return;
         }
+        // Don't let the game run if it is over
+        if (this.gameIsDone == true) {
+            return;
+        }
+
+        this.inStep = true;
+        this.actualTime = Date.now();
+        this.stepTime = this.actualTime - this.lastStepTime;
+        this.lastStepTime = this.actualTime;
+        this.runTime += this.stepTime;
+        this.stepCount++;
+
+        if (this.pointerActive) {
+            // Update red diamond position to follow the mouse
+            this.redArrow.x = this.input.mousePointer.x;
+            this.redArrow.y = this.input.mousePointer.y;
+            this.redArrow.alpha = 1;
+        } else {
+            this.redArrow.alpha = 0;
+        }
+
+        if (this.funcOverride != '') {
+            this.runOverrideFunctions();
+            this.inStep = false;
+            return;
+        }
+
         // Check for spacebar press to toggle shop
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
             if (this.playingGame) {
                 this.toggleShop();
             }
         }
-        // Update text displays
+
+        // These should update, even when the shop is opened
         this.updateTextDisplays();
-        // Handle weapon firing
 
-        // Update health bar
-        this.healthBar.width = (this.playerHealth / this.playerMaxHealth) * 500;
-
-        switch (this.funcOverride) {
-            case '':
-                break;
-            case 'createStars':
-                this.createStars();
-                break;
-            case 'slideStars':
-                this.slideStars();
-                break;
-            case 'fadeStars':
-                this.fadeStars();
-                break;
-            case 'gameMenu':
-                //Removed
-                this.paused = false;
-                break
-            case 'playBoneMusic':
-                this.playBoneMusic();
-                this.paused = false;
-                break;
-            case 'playMadnessMusic':
-                this.playMadnessMusic();
-                this.paused = false;
-                break;
-            case 'playWinMusic':
-                this.playWinMusic();
-                this.paused = false;
-                break;
-            case 'playRunMusic':
-                this.playRunMusic();
-                this.paused = false;
-                break;
-            case 'playEasyLevelMusic':
-                this.playEasyLevelMusic();
-                this.paused = false;
-                break;
-            case 'playBossMusic':
-                this.playBossMusic();
-                this.paused = false;
-                break;
-        }
-
-        if (this.paused) {
+        if (this.pausedForShop) {
+            this.inStep = false;
             return;
         }
 
+        if (this.cheatActive && Phaser.Input.Keyboard.JustDown(this.qKey)) {
+            this.gameTimer += 20000;
+        }
+
+        // ==================== FInd and run the right timeline segment.
         this.runTimetime();
 
-        if (this.paused) {
+        // If we re now in an oerride function, do it and restart the step
+        if (this.funcOverride != '') {
+            this.runOverrideFunctions();
+            this.inStep = false;
             return;
         }
 
-        // Increment game timer
-        this.gameTimer += delta;
-        let isMoving = false;
-        // Check for collisions between player and leaves, and remove old leaves
+        // Past this point, the game is active.
+        // Do all game play logic.
 
+        // Increment game timer
+        this.gameTimer += this.stepTime;
+        let isMoving = false;
+
+
+        // Check for collisions between player and leaves, and remove old leaves
         for (let i = this.leaves.length - 1; i >= 0; i--) {
             const leaf = this.leaves[i];
             if (this.checkForCollision(leaf, this.player, true, false, true) ||
@@ -849,10 +946,10 @@ class Example extends Phaser.Scene {
                     this.score += 5;
                     leaf.destroy();
                     this.leaves.splice(i, 1);
-                    const currentTime = this.time.now;
-                    if (currentTime - this.lastLeafSoundTime > 100) { // 100ms = 0.1 seconds
+
+                    if (this.gameTimer - this.lastLeafSoundTime > 100) { // 100ms = 0.1 seconds
                         this.sound.play('leafPickupSound');
-                        this.lastLeafSoundTime = currentTime;
+                        this.lastLeafSoundTime = this.gameTimer;
                     }
                 } else {
                     if (this.worldX < leaf.x) {
@@ -868,36 +965,37 @@ class Example extends Phaser.Scene {
                 }
 
 
-            } else if (time - leaf.creationTime > 30000) { // 30 seconds in milliseconds
+            } else if (this.gameTimer - leaf.creationTime > 30000) { // 30 seconds in milliseconds
                 leaf.destroy();
                 this.leaves.splice(i, 1);
             }
         }
 
 
+
         // Move enemies towards player
         this.moveEnemies();
 
-        // Check for enemy proximity and apply damage
-        const currentTime = this.time.now;
-        if (!this.isInvulnerable && currentTime - this.lastDamageTime > 500) { // Check if player is vulnerable and half a second has passed
-            // Sort enemies by damage in descending order
-            const sortedEnemies = this.enemies.sort((a, b) => b.damage - a.damage);
-            for (let enemy of sortedEnemies) {
-                if (this.checkForCollision(enemy, this.player, true, true)) {
-                    this.playerHealth -= enemy.damage;
-                    this.lastDamageTime = currentTime;
-                    this.isInvulnerable = true;
-                    this.sound.play('damageSound');
-                    if (this.playerHealth <= 0) {
-                        this.playerHealth = 0;
-                        this.gameOverScreen();
+        if (this.lastDamageTime + 500 < this.gameTimer) {
+            this.isInvulnerable = false;
+        }
+
+        if (this.stepCount % 4 == 2) {
+            if (!this.isInvulnerable && this.gameTimer - this.lastDamageTime > 500) { // Check if player is vulnerable and half a second has passed
+                // Sort enemies by damage in descending order
+                const sortedEnemies = this.enemies.sort((a, b) => b.damage - a.damage);
+                for (let enemy of sortedEnemies) {
+                    if (this.checkForCollision(enemy, this.player, true, true)) {
+                        this.playerHealth -= enemy.damage;
+                        this.lastDamageTime = this.gameTimer;
+                        this.isInvulnerable = true;
+                        this.sound.play('damageSound');
+                        if (this.playerHealth <= 0) {
+                            this.playerHealth = 0;
+                            this.gameOverScreen();
+                        }
+                        break; // Exit the loop after the first enemy damages the player
                     }
-                    // Set a timer to make the player vulnerable again after 500 ms
-                    this.time.delayedCall(500, () => {
-                        this.isInvulnerable = false;
-                    });
-                    break; // Exit the loop after the first enemy damages the player
                 }
             }
         }
@@ -950,11 +1048,9 @@ class Example extends Phaser.Scene {
             this.duplicatePlayer.setTexture('player1');
         }
 
+        this.fireWeapons(this.gameTimer);
 
-
-        this.fireWeapons(currentTime);
-
-        this.manageBullets(currentTime);
+        this.manageBullets(this.gameTimer);
 
         if (isMoving) {
             this.player.play('walk', true);
@@ -962,16 +1058,21 @@ class Example extends Phaser.Scene {
             this.player.stop();
             this.player.setTexture('player1');
         }
+
         // Update depths of all objects based on their Y position
-        this.updateObjectDepths();
-
-
+        if (this.stepCount % 4 == 1) {
+            this.updateObjectDepths();
+        }
 
         // Remove distant enemies
-        this.removeDistantEnemies();
+        if (this.stepCount % 4 == 0) {
+            this.removeDistantEnemies();
+        }
 
-        this.processDamageText(currentTime);
 
+        this.processDamageText(this.gameTimer);
+
+        this.inStep = false;
         return;
         //
         //update dots
@@ -994,7 +1095,7 @@ class Example extends Phaser.Scene {
             }
         });
 
-        //
+        this.inStep = false;
     }
 
     addObjDots(obj, color, is_bullet = false) {
@@ -1290,17 +1391,17 @@ class Example extends Phaser.Scene {
     manageBullets(currentTime) {
         for (let i = this.activeBullets.jellyBeans.length - 1; i >= 0; i--) {
             if (this.processLinearBulletMovement('jellyBeans', i, currentTime)) {
-                this.processOneHitBullet('jellyBeans', i);
+                this.processOneHitBullet('jellyBeans', i, currentTime);
             }
         }
         for (let i = this.activeBullets.chocolateShields.length - 1; i >= 0; i--) {
             if (this.processShieldBulletMovement('chocolateShields', i, currentTime)) {
-                this.processOneHitBullet('chocolateShields', i);
+                this.processOneHitBullet('chocolateShields', i, currentTime);
             }
         }
         for (let i = this.activeBullets.candyCorns.length - 1; i >= 0; i--) {
             if (this.processLinearBulletMovement('candyCorns', i, currentTime)) {
-                this.processOneHitBullet('candyCorns', i);
+                this.processOneHitBullet('candyCorns', i, currentTime);
             }
         }
         for (let i = this.activeBullets.cottonCandies.length - 1; i >= 0; i--) {
@@ -1335,7 +1436,7 @@ class Example extends Phaser.Scene {
         }
         for (let i = this.activeBullets.cupCakes.length - 1; i >= 0; i--) {
             if (this.processLinearBulletMovement('cupCakes', i, currentTime)) {
-                this.processOneHitBullet('cupCakes', i);
+                this.processOneHitBullet('cupCakes', i, currentTime);
             }
         }
         for (let i = this.activeBullets.candyBags.length - 1; i >= 0; i--) {
@@ -1413,14 +1514,14 @@ class Example extends Phaser.Scene {
     }
 
     // process colisions fo bullets that only hit once.
-    processOneHitBullet(myBulletGroupName, ind) {
+    processOneHitBullet(myBulletGroupName, ind, currentTime) {
         let myBulletGroup = this.activeBullets[myBulletGroupName];
         let myBullet = myBulletGroup[ind];
 
         for (let j = 0; j < this.enemies.length; j++) {
             const enemy = this.enemies[j];
             if (this.checkForCollision(enemy, myBullet, false, false, true)) {
-                this.hitEnemy(enemy, myBullet, j);
+                this.hitEnemy(enemy, myBullet, j, currentTime);
                 // Destroy Bean
                 this.activeBullets[myBulletGroupName].splice(ind, 1);
                 myBullet.destroy();
@@ -1440,7 +1541,7 @@ class Example extends Phaser.Scene {
                 const enemy = this.enemies[j];
                 if (this.checkForCollision(enemy, myBullet, false, false, true)) {
                     let enemyHealth = enemy.health;
-                    this.hitEnemy(enemy, myBullet, j);
+                    this.hitEnemy(enemy, myBullet, j, currentTime);
                     // Destroy Bean
                     if (enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss' || enemyHealth > myBullet.settings.power) {
                         this.activeBullets[myBulletGroupName].splice(ind, 1);
@@ -1493,7 +1594,7 @@ class Example extends Phaser.Scene {
             for (let j = 0; j < this.enemies.length; j++) {
                 const enemy = this.enemies[j];
                 if (this.checkForCollision(enemy, myBullet, false, false, true)) {
-                    this.hitEnemy(enemy, myBullet, j);
+                    this.hitEnemy(enemy, myBullet, j, currentTime);
 
                     if (myBullet.generation < myBullet.settings.generationMax) {
                         this.fireIceCream(
@@ -1534,11 +1635,11 @@ class Example extends Phaser.Scene {
             for (let j = 0; j < this.enemies.length; j++) {
                 const enemy = this.enemies[j];
                 if (this.checkForCollision(enemy, myBullet, false, false, true)) {
-                    this.hitEnemy(enemy, myBullet, j);
+                    this.hitEnemy(enemy, myBullet, j, currentTime);
                 }
                 if (enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss') {
-                        this.activeBullets[myBulletGroupName].splice(ind, 1);
-                        myBullet.destroy();
+                    this.activeBullets[myBulletGroupName].splice(ind, 1);
+                    myBullet.destroy();
                 }
             }
         }
@@ -1557,7 +1658,7 @@ class Example extends Phaser.Scene {
                     myBullet.angle = angle;
                     myBullet.hSpeed = Math.cos(angle) * myBullet.settings.speed;
                     myBullet.vSpeed = Math.sin(angle) * myBullet.settings.speed;
-                    this.hitEnemy(enemy, myBullet, j);
+                    this.hitEnemy(enemy, myBullet, j, currentTime);
                 }
                 if (enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss') {
                     this.activeBullets[myBulletGroupName].splice(ind, 1);
@@ -1567,14 +1668,13 @@ class Example extends Phaser.Scene {
         }
     }
 
-    hitEnemy(enemy, bullet, ind) {
+    hitEnemy(enemy, bullet, ind, currentTime) {
         const damage = bullet.settings.power;
         if (damage <= 0) {
             return;
         }
         enemy.health -= damage;
         this.createDamageText(enemy.x, enemy.y, damage);
-        const currentTime = this.time.now;
 
         if (enemy.health <= 0) {
             // Play destroy sound when enemy is destroyed
@@ -1606,8 +1706,9 @@ class Example extends Phaser.Scene {
 
             // Check if the destroyed enemy was a boss
             if (enemy.type === 'largeBoss' || enemy.type === 'smallBoss') {
-                this.youWinScreen();
+                this.jumpToTimeSegment('endBossBattle');
             }
+
         } else {
             // Play hit sound only if enemy is not destroyed and cooldown has passed
             if (currentTime - this.lastEnemySoundTime > 100) { // 100ms = 0.1 seconds
@@ -1616,6 +1717,7 @@ class Example extends Phaser.Scene {
             }
         }
     }
+
     createDamageText(x, y, damage) {
         return;
         const text = this.add.text(x, y, damage.toString(), {
@@ -1623,7 +1725,7 @@ class Example extends Phaser.Scene {
             fill: '#ff0000'
         });
         text.setOrigin(0.5, 0.5);
-        text.removeAt = this.time.now + 100;
+        text.removeAt = this.gameTimer + 100;
         this.frontWorldContainer.add(text);
         this.damageTexts.push(text);
     }
@@ -1642,10 +1744,54 @@ class Example extends Phaser.Scene {
         }
     }
 
+    jumpToTimeSegment(name = '') {
+
+        if (this.funcOverride != '') {
+            // return to normal timeline operations
+            this.funcOverride = '';
+            if (name == '') {
+                // Move on to the next segment
+                //this.currentSegment++;
+                return;
+            }
+        }
+
+        let newGameTimer = 0;
+
+        for (let i = 0; i < this.timeline.length; i++) {
+            let segTime = this.timeline[i][0] * 1000;
+            if (name === '') {
+                if (i == this.currentSegment) {
+                    // if no name is give, move to the next time segment.
+                    this.gameTimer = newGameTimer + segTime;
+                    return;
+                }
+            }
+            for (let j = 1; j < this.timeline[i].length; j++) {
+                if (this.timeline[i][j] == 'name|' + name ||
+                    this.timeline[i][j] == 'func|' + name
+                ) {
+                    // if a name is found in a time segment, move to that time segment.
+                    // Advance the timer to the this time segment.
+                    this.gameTimer = newGameTimer;
+                    // complete the previous time segment
+                    this.currentSegment = i - 1;
+                    return;
+                }
+            }
+            if (segTime > 0) {
+                newGameTimer += segTime;
+            }
+        }
+    }
+
     runTimetime() {
+
+        this.funcOverride = '';
+
         // find out which time segment we are using.
         const currentTimelineKey = this.getCurrentTimelineKey();
-
+    
         const enemyConfigs = this.timeline[currentTimelineKey];
 
         if (enemyConfigs.length == 1) {
@@ -1653,7 +1799,6 @@ class Example extends Phaser.Scene {
             return;
         }
 
-        this.funcOverride = '';
 
         enemyConfigs.forEach(timelineSettings => {
 
@@ -1665,11 +1810,11 @@ class Example extends Phaser.Scene {
 
             } else if (typeof timelineSettings === 'string') {
 
-                console.log(timelineSettings);
-
                 let rawSettings = timelineSettings.split("|");
 
-                if (rawSettings[0] == 'func') {
+                if (rawSettings[0] == 'name') {
+                    // Do nothing
+                } else if (rawSettings[0] == 'func') {
                     this.funcOverride = rawSettings[1];
                     return;
                 } else {
@@ -1700,17 +1845,6 @@ class Example extends Phaser.Scene {
 
                     this.spawnEnemyGroup(settings);
                 }
-
-            } else if (typeof timelineSettings === 'object') {
-                // Old timeline methods
-                const enemyType = timelineSettings.type;
-                const enemySettings = this.enemyProperties[enemyType];
-                const settings = {
-                    ...enemySettings,
-                    ...timelineSettings
-                };
-
-                this.spawnEnemyGroup(settings);
             }
         });
     }
@@ -1825,20 +1959,26 @@ class Example extends Phaser.Scene {
                 enemy.y += Math.sin(angle) * speed;
             }
             if (enemy.settings.type == 'witch') {
-                if (Math.random() < .02) {
-                    this.addEnemy('birdMummy', enemy.x, enemy.y, this.enemyProperties.smallPumpkin);
-                }
-                if (Math.random() < .02) {
+                if (Math.random() < .01) {
                     this.addEnemy('blackBat', enemy.x, enemy.y, this.enemyProperties.blackBat);
                 }
             }
 
-            if(enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss'){
+            if (enemy.settings.type == 'smallBoss' || enemy.settings.type == 'largeBoss') {
                 this.BossHealthBar.alpha = 1;
                 this.BossHealthBarBG.alpha = 1;
                 this.BossHealthTitle.alpha = 1;
+                this.bossIndicator.alpha = 1;
 
                 this.BossHealthBar.width = (enemy.health / enemy.settings.health) * 500;
+
+                // Calculate direction from player to boss
+                let angle = Phaser.Math.Angle.Between(this.worldX, this.worldY,
+                    enemy.x, enemy.y);
+
+                // Calculate position 300 pixels away from player in the direction of the boss
+                this.bossIndicator.x = this.player.x + Math.cos(angle) * 200;
+                this.bossIndicator.y = this.player.y + Math.sin(angle) * 200;
 
             }
         });
@@ -1867,24 +2007,43 @@ class Example extends Phaser.Scene {
         this.worldContainer.add(enemy);
     }
 
-
     getCurrentTimelineKey() {
 
         let gameTimeInSeconds = this.gameTimer / 1000;
 
-        for (let i = 0; i < this.timeline.length; i++) {
-            if (i > this.completedSegment) {
-                if (this.timeline[i][0] == '-1') {
-                    // this is an "unlimited time" section.  Pause the timer and do.
-                    this.paused = true;
-                }
-                this.completedSegment = i;
-                return i;
-            }
+        let segStartTime = 0;
+        let segEndTime = 0;
+        let segDuration = 0;
+        let nextSegment = this.currentSegment + 1;
+        let prevSegment = this.currentSegment - 1;
 
-            gameTimeInSeconds -= this.timeline[i][0];
-            if (gameTimeInSeconds <= 0) {
-                return i;
+        for (let segInd = 0; segInd < this.timeline.length; segInd++) {
+
+            segDuration = this.timeline[segInd][0];
+            segEndTime += segDuration;
+
+            if (segEndTime <= gameTimeInSeconds) {
+                // The segments are prior to the current game time.
+                if (this.currentSegment < segInd) {
+                    // If it is undone, do it.
+                    this.currentSegment = segInd;
+                    return this.currentSegment;
+                } else if (this.currentSegment == segInd) {
+                    // Time to start the next segment
+                    if (this.timeline.length - 1 > this.currentSegment) {
+                        // Only advance if there is another segment.
+                        // Otherwise, stay here.
+                        this.currentSegment++;
+                    }
+                    return this.currentSegment;
+                }
+
+            } else if (segEndTime > gameTimeInSeconds && segStartTime <= gameTimeInSeconds) {
+                // We should be doing this
+                return this.currentSegment;
+            } else {
+                // These are in the future.  We should not be here
+
             }
         }
         return this.timeline.length - 1;
@@ -1915,7 +2074,6 @@ class Example extends Phaser.Scene {
             this.textFields = [
                 'Score',
                 'Leaves',
-                'Timer',
             ];
             this.textObjects = this.textFields.map((text, index) => {
                 const textObject = this.add.text(10, 10 + index * 28, text, textConfig);
@@ -1928,11 +2086,11 @@ class Example extends Phaser.Scene {
         const texts = [
             `${this.score}`,
             `${this.collectedLeaves}`,
-            `${Math.floor(this.gameTimer / 1000)}`,
         ];
         this.textObjects.forEach((textObject, index) => {
             textObject.setText(this.textFields[index] + ': ' + texts[index]);
         });
+        this.healthBar.width = (this.playerHealth / this.playerMaxHealth) * 500;
     }
 
     isWithinBounds(x, y) {
@@ -1992,7 +2150,7 @@ class Example extends Phaser.Scene {
             const leafX = x + Phaser.Math.Between(-enemySize, enemySize);
             const leafY = y + Phaser.Math.Between(-enemySize, enemySize);
             const leaf = this.add.image(leafX, leafY, 'leaf');
-            leaf.creationTime = this.time.now; // Add creation time
+            leaf.creationTime = this.gameTimer; // Add creation time
             leaf.setOrigin(0.5, 1);
             leaf.setScale(0.5); // Set scale to 50% of current size
             leaf.setRotation(Phaser.Math.DegToRad(Phaser.Math.Between(0, 360))); // Random rotation
@@ -2012,14 +2170,17 @@ class Example extends Phaser.Scene {
 
     gameOverScreen() {
         // Save the high score
+        this.playingGame = false;
         this.gameIsDone = true;
         this.redArrow.alpha = 0;
+        this.bossIndicator.alpha = 0;
         this.saveHighScore(this.score);
         // Remove all enemies
         this.enemies.forEach(enemy => enemy.destroy());
         this.enemies = [];
         this.introOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000);
         this.introOverlay.setDepth(1000);
+
         // Add the title
         this.title = this.add.text(400, 50, 'Game Over', {
             fontSize: '64px',
@@ -2089,19 +2250,120 @@ class Example extends Phaser.Scene {
     }
 
 
+    endBossBattle() {
+        this.playingGame = false;
+
+        this.playWinMusic();
+        this.BossHealthBar.width = 0;
+
+        this.redArrow.alpha = 0;
+        this.bossIndicator.alpha = 0;
+
+        // Destroy all bullets and set arrays to empty
+        Object.keys(this.activeBullets).forEach(bulletType => {
+            this.activeBullets[bulletType].forEach(bullet => bullet.removeAt = 0);
+        });
+
+
+        // Destroy all enemies
+        this.enemies.forEach(enemy => enemy.destroy());
+        this.enemies = [];
+
+        this.endOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000);
+        this.endOverlay.setDepth(2000);
+
+        this.cinematicStep = -1;
+
+        this.deadBoss = this.add.image(this.player.x, this.player.y, 'largeBoss');
+        this.deadBoss.scale = .5;
+        this.deadBoss.alpha = 0;
+        this.deadBoss.setDepth(2004);
+        this.bossBits = [];
+
+        this.jumpToTimeSegment();
+
+        this.stars = [];
+        for (let i = 0; i < 100; i++) {
+            const x = Phaser.Math.Between(0, 800);
+            const y = Phaser.Math.Between(0, 600);
+            const star = this.add.circle(x, y, 1, 0xffffff);
+            star.setDepth(2001);
+            this.stars.push(star);
+        }
+
+
+    }
+
+    bossDies() {
+        this.slideStars();
+        this.cinematicStep++;
+
+        if(this.cinematicStep < 50){
+            this.deadBoss.alpha += .02;
+            return;
+        }
+
+        if(this.cinematicStep < 80){
+            return;
+        }
+
+        if(this.deadBoss.scale > 0){
+            this.deadBoss.scale -= .002;
+
+            if (Math.random() < .3) {
+                let myBullet = this.add.image(this.player.x, this.player.y, 'smallPumpkin');
+                myBullet.hSpeed = (Math.random() * 20) - 10;
+                myBullet.vSpeed = (Math.random() * 20) - 10;
+                myBullet.scale = .1 + (Math.random() * .2);
+                myBullet.setDepth(2003);
+                this.sound.play('enemyHitSound');
+                this.bossBits.push(myBullet);
+            }
+            if (Math.random() < .3) {
+                let myBullet = this.add.image(this.player.x, this.player.y, 'bonbon');
+                const randomHue = Phaser.Math.Between(0, 359);
+                myBullet.setTint(Phaser.Display.Color.HSLToColor(randomHue / 360, 1, 0.5).color);
+                myBullet.hSpeed = (Math.random() * 20) - 10;
+                myBullet.vSpeed = (Math.random() * 20) - 10;
+                myBullet.scale = .1 + (Math.random() * .1);
+                myBullet.setDepth(2003);
+                this.sound.play('enemyHitSound');
+                this.bossBits.push(myBullet);
+            }
+        }
+
+        if(this.cinematicStep < 400){
+
+            for (let i = 0; i < this.bossBits.length; i++) {
+                
+                let tar = this.bossBits[i];
+                tar.x = tar.x + tar.hSpeed;
+                tar.y = tar.y + tar.vSpeed;
+            }
+            return;
+
+        }
+        this.deadBoss.destroy();
+        this.jumpToTimeSegment('addWinDialogOne');
+
+    }
 
     youWinScreen() {
-        this.redArrow.alpha = 0;
-        this.gameIsDone = true;
-        this.playWinMusic();
+
+        this.dialogImg1.destroy();
+        this.dialogText1.destroy();
+        this.dialogImg2.destroy();
+        this.dialogText2.destroy();
+        this.dialogImg3.destroy();
+        this.dialogText3.destroy();
+        this.dialogImg4.destroy();
+        this.dialogText4.destroy();
+
 
         // Save the high score
         this.saveHighScore(this.score);
         // Remove all enemies
-        this.enemies.forEach(enemy => enemy.destroy());
-        this.enemies = [];
-        this.introOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000);
-        this.introOverlay.setDepth(1000);
+
         // Add the title
         this.title = this.add.text(400, 50, 'You Win!!', {
             fontSize: '64px',
@@ -2111,7 +2373,7 @@ class Example extends Phaser.Scene {
             strokeThickness: 6
         });
         this.title.setOrigin(0.5);
-        this.title.setDepth(1002);
+        this.title.setDepth(2010);
 
         // Add instructions text
         this.instructions = this.add.text(400, 120,
@@ -2122,7 +2384,7 @@ class Example extends Phaser.Scene {
                 align: 'center'
             });
         this.instructions.setOrigin(0.5);
-        this.instructions.setDepth(1002);
+        this.instructions.setDepth(2010);
         // Add high score list
 
         const highScores = this.getHighScores();
@@ -2134,7 +2396,7 @@ class Example extends Phaser.Scene {
             lineSpacing: 10
         });
         this.highScoreList.setOrigin(0.5);
-        this.highScoreList.setDepth(1002);
+        this.highScoreList.setDepth(2010);
         this.highScoreList.setColor('#ffffff');
 
 
@@ -2149,7 +2411,7 @@ class Example extends Phaser.Scene {
                         lineSpacing: 10
                     });
                     this.highScoreList.setOrigin(0.5);
-                    this.highScoreList.setDepth(1002);
+                    this.highScoreList.setDepth(2010);
                     this.highScoreList.setColor('#ff6666');
 
                 } else {
@@ -2160,19 +2422,21 @@ class Example extends Phaser.Scene {
                         lineSpacing: 10
                     });
                     this.highScoreList.setOrigin(0.5);
-                    this.highScoreList.setDepth(1002);
+                    this.highScoreList.setDepth(2010);
                     this.highScoreList.setColor('#ffffff');
                 }
             } else {
                 scoreText += `${i + 1}. -------\n`;
             }
         }
+        this.deadBoss.destroy();
+        this.jumpToTimeSegment();
 
     }
 
     // Movies
 
-    createStars() {
+    createStartMenu() {
 
         // Create white spots for stars
         this.stars = [];
@@ -2184,7 +2448,7 @@ class Example extends Phaser.Scene {
             this.stars.push(star);
         }
         // Add the moon
-        this.moon = this.add.image(100, 200, 'moon');
+        this.moon = this.add.image(100, 300, 'moon');
         this.moon.setOrigin(0.5, 0.5);
         this.moon.setScale(0.5);
         this.moon.setDepth(1001);
@@ -2249,16 +2513,22 @@ class Example extends Phaser.Scene {
             useHandCursor: true
         });
         this.playButton.on('pointerdown', this.PlayGameButtonClick, this);
-        this.playButton.setDepth(1002);
+        this.playButton.setDepth(2002);
+
         // Set up variables for the cinematic effect
         this.cinematicStep = 0;
-        this.paused = false;
+
+        // Keep going
+        this.jumpToTimeSegment();
     }
 
     PlayGameButtonClick() {
-        this.paused = false;
+        this.jumpToTimeSegment('addDialogOne');
     }
 
+    SkipGameButtonClick() {
+        this.jumpToTimeSegment('fadeStars');
+    }
 
     slideStars() {
         this.stars.forEach(star => {
@@ -2270,17 +2540,247 @@ class Example extends Phaser.Scene {
         // Move the moon
         this.moon.y += .2; // Move the moon slower than the stars
 
+        // Wait till button click
     }
+
+    addWinDialogOne() {
+        this.title.destroy();
+        this.instructions.destroy();
+        this.highScoreList.destroy(); // Destroy high score list
+        this.playButton.destroy();
+
+        this.dialogImg1 = this.add.sprite(100, 100, 'chuckFace');
+        this.dialogImg1.setScale(0.3); // Make the player 80% smaller
+        this.dialogImg1.setDepth(2005);
+
+        this.dialogText1 = this.add.text(
+            400, 50,
+            this.segmentString("I did it!  I gave all of the monsters candy, and now they're gone!  Halloween is saved!",36)
+            , {
+                fontSize: '22px',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.dialogText1.setOrigin(.5, 0);
+        this.dialogText1.setDepth(2005);
+
+        this.dialogImg2 = this.add.sprite(700, 230, 'sarahFace');
+        this.dialogImg2.setScale(0.3); // Make the player 80% smaller
+        this.dialogImg2.setDepth(2005);
+        this.dialogImg2.alpha = 0;
+
+        this.dialogText2 = this.add.text(
+            400, 180,
+            this.segmentString("You bonehead!  All of the monsters followed you home looking for more candy!  Now we're swamped!",36)
+            , {
+                fontSize: '22px',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.dialogText2.setOrigin(.5, 0);
+        this.dialogText2.setDepth(2005);
+        this.dialogText2.alpha = 0;
+
+        this.dialogImg3 = this.add.sprite(100, 360, 'chuckFace');
+        this.dialogImg3.setScale(0.3); // Make the player 80% smaller
+        this.dialogImg3.setDepth(2005);
+        this.dialogImg3.alpha = 0;
+
+        this.dialogText3 = this.add.text(
+            400, 310,
+            this.segmentString("What?!  Oh no!  What are we doing to do now??",36)
+            , {
+                fontSize: '22px',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.dialogText3.setOrigin(.5, 0);
+        this.dialogText3.setDepth(2005);
+        this.dialogText3.alpha = 0;
+
+
+        this.dialogImg4 = this.add.sprite(700, 490, 'sarahFace');
+        this.dialogImg4.setScale(0.3); // Make the player 80% smaller
+        this.dialogImg4.setDepth(2005);
+        this.dialogImg4.alpha = 0;
+
+        this.dialogText4 = this.add.text(
+            400, 440,
+            this.segmentString("Better come up with a new plan before mom gets home, or your goose is cooked!",36)
+            , {
+                fontSize: '22px',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.dialogText4.setOrigin(.5, 0);
+        this.dialogText4.setDepth(2005);
+        this.dialogText4.alpha = 0;
+
+        this.jumpToTimeSegment();
+    }
+
+
+
+
+
+    addWinDialogTwo() {
+        this.dialogText2.alpha = 1;
+        this.dialogImg2.alpha = 1;
+        this.jumpToTimeSegment();
+    }
+
+    addWinDialogThree() {
+        this.dialogText3.alpha = 1;
+        this.dialogImg3.alpha = 1;
+        this.jumpToTimeSegment();
+    }
+
+    addWinDialogFour() {
+        this.dialogText4.alpha = 1;
+        this.dialogImg4.alpha = 1;
+        this.jumpToTimeSegment();
+    }
+
+
+    addDialogOne() {
+        this.title.destroy();
+        this.instructions.destroy();
+        this.highScoreList.destroy(); // Destroy high score list
+        this.playButton.destroy();
+
+        // Add the play button
+        this.skipButton = this.add.text(400, 550, 'Skip', {
+            fontSize: '32px',
+            fontStyle: 'bold',
+            fill: '#ffffff',
+            backgroundColor: '#000000',
+            padding: {
+                left: 15,
+                right: 15,
+                top: 10,
+                bottom: 10
+            }
+        });
+        this.skipButton.setOrigin(0.5);
+        this.skipButton.setInteractive({
+            useHandCursor: true
+        });
+        this.skipButton.on('pointerdown', this.SkipGameButtonClick, this);
+        this.skipButton.setDepth(2002);
+
+
+        this.dialogImg1 = this.add.sprite(100, 100, 'chuckFace');
+        this.dialogImg1.setScale(0.3); // Make the player 80% smaller
+        this.dialogImg1.setDepth(2000);
+
+        this.dialogText1 = this.add.text(
+            400, 50,
+            this.segmentString("Sarah! I'm so glad you're safe.  The neighborhood is full of monsters!",36)
+            , {
+                fontSize: '22px',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.dialogText1.setOrigin(.5, 0);
+        this.dialogText1.setDepth(1002);
+
+        this.dialogImg2 = this.add.sprite(700, 230, 'sarahFace');
+        this.dialogImg2.setScale(0.3); // Make the player 80% smaller
+        this.dialogImg2.setDepth(2000);
+        this.dialogImg2.alpha = 0;
+
+        this.dialogText2 = this.add.text(
+            400, 180,
+            this.segmentString("They almost got me!  How are we suposed to Trick or Treat with so many monsters around?!",36)
+            , {
+                fontSize: '22px',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.dialogText2.setOrigin(.5, 0);
+        this.dialogText2.setDepth(1002);
+        this.dialogText2.alpha = 0;
+
+        this.dialogImg3 = this.add.sprite(100, 360, 'chuckFace');
+        this.dialogImg3.setScale(0.3); // Make the player 80% smaller
+        this.dialogImg3.setDepth(2000);
+        this.dialogImg3.alpha = 0;
+
+        this.dialogText3 = this.add.text(
+            400, 310,
+            this.segmentString("Maybe they just want some candy.  I bet if I gave them some jelly beans, they'd leave us alone.",36)
+            , {
+                fontSize: '22px',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.dialogText3.setOrigin(.5, 0);
+        this.dialogText3.setDepth(1002);
+        this.dialogText3.alpha = 0;
+
+
+        this.dialogImg4 = this.add.sprite(700, 490, 'sarahFace');
+        this.dialogImg4.setScale(0.3); // Make the player 80% smaller
+        this.dialogImg4.setDepth(2000);
+        this.dialogImg4.alpha = 0;
+
+        this.dialogText4 = this.add.text(
+            400, 440,
+            this.segmentString("It better work, or else Hallowen will be ruined for all of the whole neighborhood!  Don't let us down.",36)
+            , {
+                fontSize: '22px',
+                fill: '#ffffff',
+                align: 'center'
+            });
+        this.dialogText4.setOrigin(.5, 0);
+        this.dialogText4.setDepth(1002);
+        this.dialogText4.alpha = 0;
+
+        this.jumpToTimeSegment();
+    }
+
+
+
+    addDialogTwo() {
+        this.dialogText2.alpha = 1;
+        this.dialogImg2.alpha = 1;
+        this.jumpToTimeSegment();
+    }
+
+    addDialogThree() {
+        this.dialogText3.alpha = 1;
+        this.dialogImg3.alpha = 1;
+        this.jumpToTimeSegment();
+    }
+
+    addDialogFour() {
+        this.dialogText4.alpha = 1;
+        this.dialogImg4.alpha = 1;
+        this.jumpToTimeSegment();
+    }
+
+
+
 
     fadeStars() {
         // Scroll stars
+        if(this.cinematicStep == 0){
+            this.skipButton.destroy();
+        }
+
         if (this.introOverlay.alpha > 0) {
+            this.dialogImg1.alpha -= .02;
+            this.dialogText1.alpha -= .02;
+            this.dialogImg2.alpha -= .02;
+            this.dialogText2.alpha -= .02;
+            this.dialogImg3.alpha -= .02;
+            this.dialogText3.alpha -= .02;
+            this.dialogImg4.alpha -= .02;
+            this.dialogText4.alpha -= .02;
+
             this.introOverlay.alpha -= .02;
             this.moon.alpha -= .02;
-            this.title.alpha -= .02;
-            this.instructions.alpha -= .02;
-            this.highScoreList.alpha -= .02; // Fade out high score list
-            this.playButton.alpha -= .02;
+
             this.stars.forEach(star => {
                 star.alpha -= .02;
             });
@@ -2288,21 +2788,30 @@ class Example extends Phaser.Scene {
         this.cinematicStep += 1;
         // Remove cinematic elements when done
         if (this.cinematicStep == 50) {
+
+            this.dialogImg1.destroy();
+            this.dialogText1.destroy();
+            this.dialogImg2.destroy();
+            this.dialogText2.destroy();
+            this.dialogImg3.destroy();
+            this.dialogText3.destroy();
+            this.dialogImg4.destroy();
+            this.dialogText4.destroy();
+
             this.introOverlay.destroy();
             this.stars.forEach(star => star.destroy());
             this.stars = [];
             this.moon.destroy();
-            this.title.destroy();
-            this.instructions.destroy();
-            this.highScoreList.destroy(); // Destroy high score list
-            this.playButton.destroy();
+
             this.cinematicStep = 0;
-            this.paused = false;
+
+            this.jumpToTimeSegment();
             return;
         }
 
         this.slideStars();
     }
+
 
     playBoneMusic() {
         this.boneMusic = this.sound.add('boneMusic');
@@ -2310,6 +2819,7 @@ class Example extends Phaser.Scene {
         this.boneMusic.setLoop(true);
         this.boneMusic.play();
         this.currentMusic = this.boneMusic;
+        this.jumpToTimeSegment();
     }
 
     playMadnessMusic() {
@@ -2318,6 +2828,7 @@ class Example extends Phaser.Scene {
         this.madnessMusic.setLoop(true);
         this.madnessMusic.play();
         this.currentMusic = this.madnessMusic;
+        this.jumpToTimeSegment();
     }
 
     playWinMusic() {
@@ -2326,6 +2837,7 @@ class Example extends Phaser.Scene {
         this.winMusic.setLoop(true);
         this.winMusic.play();
         this.currentMusic = this.winMusic;
+        this.jumpToTimeSegment();
     }
 
     playRunMusic() {
@@ -2334,6 +2846,7 @@ class Example extends Phaser.Scene {
         this.runMusic.setLoop(true);
         this.runMusic.play();
         this.currentMusic = this.runMusic;
+        this.jumpToTimeSegment();
     }
 
     playEasyLevelMusic() {
@@ -2342,6 +2855,7 @@ class Example extends Phaser.Scene {
         this.easyLevelMusic.setLoop(true);
         this.easyLevelMusic.play();
         this.currentMusic = this.easyLevelMusic;
+        this.jumpToTimeSegment();
     }
 
     playBossMusic() {
@@ -2358,6 +2872,7 @@ class Example extends Phaser.Scene {
             this.bossMusic.setLoop(true);
             this.bossMusic.play();
         });
+        this.jumpToTimeSegment();
     }
     getHighScores() {
         const scores = JSON.parse(localStorage.getItem('highScores')) || [];
@@ -2369,7 +2884,37 @@ class Example extends Phaser.Scene {
         highScores.sort((a, b) => b - a);
         localStorage.setItem('highScores', JSON.stringify(highScores.slice(0, 10)));
     }
+
+    doOnce(tag) {
+        if (this.completed.includes(tag)) {
+            return false;
+        }
+        this.completed.push(tag);
+        return true;
+    }
+
+    segmentString(inputString, maxLength) {
+        const words = inputString.split(' ');
+        let segments = [];
+        let currentSegment = '';
+
+        for (let word of words) {
+            if ((currentSegment + word).length <= maxLength) {
+                currentSegment += (currentSegment ? ' ' : '') + word;
+            } else {
+                if (currentSegment) segments.push(currentSegment);
+                currentSegment = word;
+            }
+        }
+
+        if (currentSegment) segments.push(currentSegment);
+
+        return segments.join('\n');
+    }
 }
+
+
+
 const config = {
     type: Phaser.AUTO,
     parent: 'renderDiv',
