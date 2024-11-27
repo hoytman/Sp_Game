@@ -75,5 +75,5 @@ this.timeline = [
     [0, "func|addWinDialogFour"],
     [4],
     [0, "func|youWinScreen"],
-    [9999999999, func|slideStars]
+    [9999999999, "func|slideStars"]
 ];
