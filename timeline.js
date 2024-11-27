@@ -63,7 +63,7 @@ this.timeline = [
     [30, "vineTiny|circle|r:0.1", "vineSmall|circle|r:0.1", "vineBig|circle|r:0.08", "vineHuge|circle|r:0.05", "vineGiant|circle|r:0.05"],
     [30, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.1", "vineHuge|circle|r:0.08", "vineGiant|circle|r:0.08"],
     [30, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.1", "vineHuge|circle|r:0.1", "vineGiant|circle|r:0.1"],
-    [10000000, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.2", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.2"],
+    [9999999999, "vineTiny|circle|r:0.2", "vineSmall|circle|r:0.2", "vineBig|circle|r:0.2", "vineHuge|circle|r:0.2", "vineGiant|circle|r:0.2"],
     [0, "func|endBossBattle"],
     [0, "func|bossDies"],
     [0, "func|addWinDialogOne"],
@@ -75,4 +75,5 @@ this.timeline = [
     [0, "func|addWinDialogFour"],
     [4],
     [0, "func|youWinScreen"],
+    [9999999999, func|slideStars]
 ];
