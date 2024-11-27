@@ -49,7 +49,7 @@ this.timeline = [
     [30, "mummy|circle|r:0.03"],
     [5],
     [0, "vineTiny|circle|r:20|s:200", "vineSmall|circle|r:20", "func|playBossMusic"],
-    [26, "vineTiny|circle|r:0.1", "vineSmall|circle|r:0.1"],
+    [22, "vineTiny|circle|r:0.1", "vineSmall|circle|r:0.1"],
     [0, "largeBoss|angle|r:1", "name|phase1"],
     [999999999, "vineTiny|circle|r:0.1", "vineSmall|circle|r:0.1"],
     [0, "vineBig|circle|r:10|s:100", "name|phase2"],
